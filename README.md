@@ -6,3 +6,4 @@ Run Order:
   set FLASK_APP=<path to application/router.py>
   flask run
   --Should be fine from here--
+  
