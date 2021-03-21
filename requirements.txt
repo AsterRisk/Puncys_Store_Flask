@@ -3,6 +3,9 @@ flask-wtf
 sqlalchemy
 flask-sqlalchemy
 flask-sessions
+flask-session
 wtforms
 wtforms.validators
 email_validator
+mysqlclient
+flask-login
