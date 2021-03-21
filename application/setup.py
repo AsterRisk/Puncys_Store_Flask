@@ -1,23 +1,39 @@
-# Master File containing table definitions, setting up engine connection and other stuff we might need to configure on the system
 
-from sqlalchemy import Table, Column, Integer, String, DateTime, Float, create_engine, Boolean, MetaData
+from .__init__ import app
+from sqlalchemy import Table, Column, Integer, String, DateTime, Float, create_engine, Boolean, MetaData, Unicode
 
-engine = create_engine("mysql://root:@localhost/puncys_store_1", echo = True)
+try:   
+    engine = create_engine("mysql://root:@localhost/")
+    conn = engine.connect()
+    conn.execute("commit")
+    conn.execute("create database puncys_store_1;")
+    conn.close()
+except Exception as e:
+    print("An error occurred, error details:\n---------------------\n{}\n---------------------\n".format(e))
+
+try:
+    engine = create_engine(app.config['DATABASE_URI'], echo = False)
+except Exception as e:
+    
+    print("An error occurred, error details:\n---------------------\n{}\n---------------------\n".format(e))
+    exit(1)
 meta = MetaData()
 
 
 def query(sql):
-    results = "An erro occurred.\n"
+    print("Query: '{}'".format(sql))
+    results = "An error occurred.\n"
     with engine.connect() as connection:
         try:
             results = connection.execute(sql)
         except Exception as e:
+            
             print("An error occurred, error details:\n---------------------\n{}\n---------------------\n".format(e))
     return results
 
 appointments = Table(
     'appointments', meta,
-    Column('user_id', Integer),
+    Column('user_id', Unicode(5)),
     Column('app_date', String(10)),
     Column('app_time', String(5)),
     Column('app_status', String(1)),
@@ -27,7 +43,7 @@ appointments = Table(
 bills = Table(
     'bills', meta,
     Column('bill_id', Integer, primary_key = True),
-    Column('user_id', Integer),
+    Column('user_id', Unicode(5)),
     Column('order_id', Integer),
     Column('job_type', String(12)),
     Column('fabric_cost', Float),
@@ -45,16 +61,17 @@ job_presets = Table(
 
 logins = Table(
     'logins', meta,
-    Column('user_id', Integer, primary_key = True),
-    Column('email', String(20)),
+    Column('user_id', Unicode(5), primary_key = True),
+    Column('email', String(40)),
     Column('password_hash', String(64)),
     Column('salt', Integer),
+    Column('is_active', Boolean)
 )
 
 measurements = Table(
     'measurements', meta,
     Column('measurement_id', Integer, primary_key = True),
-    Column('user_id', Integer),
+    Column('user_id', Unicode(5)),
     Column('job_type', String(12)),
     Column('name', String(12)),
     Column('length', Integer),
@@ -77,7 +94,7 @@ measurements = Table(
 orders = Table(
     'orders', meta,
     Column('order_id', Integer, primary_key = True),
-    Column('user_id', Integer),
+    Column('user_id', Unicode(5)),
     Column('first_name', String(10)),
     Column('last_name', String(10)),
     Column('state', String(1)),
@@ -94,18 +111,16 @@ orders = Table(
 
 users = Table(
     'users', meta,
-    Column('user_id', Integer, primary_key = True),
+    Column('user_id', Unicode(5), primary_key = True),
     Column('first_name', String(12)),
     Column('last_name', String(12)),
     Column('tele_num', String(14)),
     Column('home_address', String(40)),
-    Column('email', String(20)),
+    Column('email', String(40)),
     Column('dob', String(10)),
     Column('profile_pic_address', String(30)),
     Column('clearance', Integer),
 )
 
-if __name__ == "__main__":
-    meta.drop_all(engine)
-    meta.create_all(engine)
-    print()
+meta.create_all(engine)
+print()

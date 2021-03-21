@@ -1,8 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
-from setup import query, appointments, bills, job_presets, logins, measurements, users, orders
-from router import app
+from .setup import query, appointments, bills, job_presets, logins, measurements, users, orders
+from werkzeug.security import generate_password_hash
+from flask_login import UserMixin
+from .__init__ import app, db
 
-db = SQLAlchemy(app)
+
 
 # --DATABASE MODELS--
 #  
@@ -37,8 +39,8 @@ db = SQLAlchemy(app)
 # || for row in results: <-- goes through each row in the resultant table, each row is a dictionary with keys === column names in the result
 
 class Appointment(db.Model):
-
-    user_id = db.Column('user_id', db.Integer)
+    __tablename__ = "appointments"
+    user_id = db.Column('user_id', db.String)
     app_date = db.Column('app_date', db.String(10))
     app_time = db.Column('app_time', db.String(5))
     app_status = db.Column('app_status', db.String(12))
@@ -50,13 +52,14 @@ class Appointment(db.Model):
         self.app_date = date
         self.app_status = "P"
         
-        ins = appointments.insert().values(user_id = self.user_id, app_time = self.app_time, app_date = self.app_date, app_id = self.app_id, app_status = self.app_status)
+        ins = appointments.insert().values(user_id = self.user_id, app_time = self.app_time, app_date = self.app_date, app_id = self.app_id, app_status = self.app_status) 
         query(ins)
 
 class Bill(db.Model):
-    user_id = db.Column('user_id', db.Integer)
+    __tablename__ = "bills"
+    user_id = db.Column('user_id', db.String)
     bill_id = db.Column('bill_id', db.Integer, primary_key = True)
-    order_id = db.Column('order_id', db.Integer)
+    order_id = db.Column('order_id', db.Integer, unique = True)
     job_type = db.Column('job_type', db.String)
     fabric_cost = db.Column('fabric_cost', db.Float)
     labour_cost = db.Column('labour_cost', db.Float)
@@ -74,6 +77,7 @@ class Bill(db.Model):
         query(ins)
 
 class JobPreset(db.Model):
+    __tablename__ = "job_presets"
     preset_id = db.Column('preset_id', db.Integer, primary_key = True)
     job_type = db.Column('type', db.String)
     garment_price = db.Column('garment_price', db.Float)
@@ -86,42 +90,52 @@ class JobPreset(db.Model):
         ins = job_presets.insert().values(preset_id = self.preset_id, job_type = self.job_type, garment_price=self.garment_price)
         query(ins)
 
-class Login(db.Model):
-    email = db.Column('email', db.String)
-    user_id = db.Column('user_id', db.Integer, primary_key = True)
+class Login(db.Model, UserMixin):
+    __tablename__ = "logins"
+    email = db.Column('email', db.String, unique = True)
+    user_id = db.Column('user_id', db.String, primary_key = True)
     password_hash = db.Column('password_hash', db.String)
     salt = db.Column('salt', db.Integer)
+    is_active = db.Column('is_active', db.Boolean)
 
-    def __init__(self, email, user_id, password_hash, salt):
+    def __init__(self, email, user_id, password, salt):
         self.email = email
         self.user_id = user_id
-        self.password_hash = password_hash
+        self.password_hash = generate_password_hash((password+str(salt)), method = 'pbkdf2:sha256')
         self.salt = salt
+        self.is_active = True
 
-        ins = logins.insert().values(email = self.email, user_id = self.user_id, password_hash = self.password_hash, salt = self.salt)
+        ins = logins.insert().values(email = self.email, user_id = self.user_id, password_hash = self.password_hash, salt = self.salt, is_active = self.is_active)
         query(ins)
 
+    def get_id(self):
+        try:
+            return unicode(self.user_id)
+        except NameError:
+            return str(self.user_id)
+
 class Measurement(db.Model):
+    __tablename__ = "measurements"
     measurement_id = db.Column('measurement_id', db.Integer, primary_key = True)
-    user_id = db.Column('user_id', db.Integer)
+    user_id = db.Column('user_id', db.String)
     job_type = db.Column('job_type', db.String)
     name = db.Column('name', db.String)
     
-    length = db.Column('length', db.String)
-    hip = db.Column('hip', db.String)
-    waist = db.Column('waist', db.String)
-    ankle = db.Column('ankle', db.String)
-    round_leg = db.Column('round_leg', db.String)
-    round_ankle = db.Column('round_ankle', db.String)
-    bust = db.Column('bust', db.String)
-    sleeve = db.Column('sleeve', db.String)
-    bicep = db.Column('bicep', db.String)
-    armhole = db.Column('armhole', db.String)
-    neck = db.Column('neck', db.String)
-    shoulder = db.Column('shoulder', db.String)
-    across_back = db.Column('across_back', db.String)
-    bust_point = db.Column('bust_point', db.String)
-    round_knee = db.Column('round_knee', db.String)
+    length = db.Column('length', db.Float)
+    hip = db.Column('hip', db.Float)
+    waist = db.Column('waist', db.Float)
+    ankle = db.Column('ankle', db.Float)
+    round_leg = db.Column('round_leg', db.Float)
+    round_ankle = db.Column('round_ankle', db.Float)
+    bust = db.Column('bust', db.Float)
+    sleeve = db.Column('sleeve', db.Float)
+    bicep = db.Column('bicep', db.Float)
+    armhole = db.Column('armhole', db.Float)
+    neck = db.Column('neck', db.Float)
+    shoulder = db.Column('shoulder', db.Float)
+    across_back = db.Column('across_back', db.Float)
+    bust_point = db.Column('bust_point', db.Float)
+    round_knee = db.Column('round_knee', db.Float)
 
     def __init__(self, user_id, job_type, name, length = None, waist = None, hip = None, ankle = None, round_leg = None, round_ankle = None, bust = None, sleeve = None, bicep = None, armhole = None, neck = None, shoulder = None, across_back = None, bust_point = None, round_knee = None):
         self.user_id = user_id
@@ -151,8 +165,9 @@ class Measurement(db.Model):
         query(ins)
 
 class Order(db.Model):
+    __tablename__ = "orders"
     order_id = db.Column('order_id', db.Integer, primary_key = True)
-    user_id = db.Column('user_id', db.Integer)
+    user_id = db.Column('user_id', db.String)
     first_name = db.Column('first_name', db.String)
     last_name = db.Column('last_name', db.String)
     state = db.Column('state', db.String)
@@ -166,14 +181,14 @@ class Order(db.Model):
     est_cost = db.Column('est_cost', db.Float)
     providing_fabric = db.Column('providing_fabric', db.Boolean)
 
-    def __init__(self, user_id, first_name, last_name, contact_num, delivery_address, job_type, measurement_id, date_placed, due_date, media_address, est_cost, providing_fabric):
+    def __init__(self, user_id, first_name, last_name, contact_num, delivery_address, typ, measurement_id, date_placed,  est_cost, providing_fabric, media_address = None, due_date = None):
         self.user_id = user_id
         self.first_name = first_name
         self.last_name = last_name
         self.state = "P"
         self.contact_num = contact_num
         self.delivery_address = delivery_address
-        self.job_type = job_type
+        self.type = typ
         self.measurement_id = measurement_id
         self.date_placed = date_placed
         self.due_date = due_date
@@ -182,34 +197,36 @@ class Order(db.Model):
         self.providing_fabric = providing_fabric
 
         ins = orders.insert().values(user_id = self.user_id, first_name = self.first_name, last_name = self.last_name, state = self.state, \
-                                            contact_num = self.contact_num, delivery_address = self.delivery_address, job_type = self.job_type, \
+                                            contact_num = self.contact_num, delivery_address = self.delivery_address, type = self.type, \
                                             measurement_id = self.measurement_id, date_placed = self.date_placed, due_date = self.due_date, \
                                             media_address = self.media_address, est_cost = self.est_cost, providing_fabric = self.providing_fabric)
         query(ins)
 
 class User(db.Model):
-    user_id = db.Column('user_id', db.Integer, primary_key = True)
-    email = db.Column('email', db.String)
+    __tablename__ = "users"
+    user_id = db.Column('user_id', db.String, primary_key = True)
+    email = db.Column('email', db.String, unique = True)
     first_name = db.Column('first_name', db.String)
     last_name = db.Column('last_name', db.String)
     tele_num = db.Column('tele_num', db.String)
-    home_addr = db.Column('home_address', db.String)
+    home_address = db.Column('home_address', db.String)
     dob = db.Column('dob', db.String)
     profile_pic_address = db.Column('profile_pic_address', db.String)
     clearance = db.Column('clearance', db.Integer)
 
-    def __init__(self, email, first_name, last_name, tele_num, home_addr, dob, ppa, clearance):
+    def __init__(self, email, first_name, last_name, tele_num, home_address, dob, ppa, clearance, id):
         self.email = email
         self.first_name = first_name
         self.last_name = last_name
         self.tele_num = tele_num
-        self.home_addr = home_addr
+        self.home_address = home_address
         self.dob = dob
         self.profile_pic_address = ppa
         self.clearance = clearance
+        self.user_id=id
 
-        ins = users.insert().values(email = self.email, first_name = self.first_name, last_name = self.last_name, home_addr = self.home_addr, \
+        ins = users.insert().values(email = self.email, first_name = self.first_name, last_name = self.last_name, home_address = self.home_address, \
                                     tele_num = self.tele_num, dob = self.dob, profile_pic_address = self.profile_pic_address, \
-                                    clearance = self.clearance)
+                                    clearance = self.clearance, user_id = self.user_id)
         query(ins)
     
