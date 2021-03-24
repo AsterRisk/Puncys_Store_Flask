@@ -52,7 +52,7 @@ class Appointment(db.Model):
         self.app_date = date
         self.app_status = "P"
         
-        ins = appointments.insert().values(user_id = self.user_id, app_time = self.app_time, app_date = self.app_date, app_id = self.app_id, app_status = self.app_status) 
+        ins = appointments.insert().values(user_id = self.user_id, app_time = self.app_time, app_date = self.app_date, app_status = self.app_status) 
         query(ins)
 
 class Bill(db.Model):

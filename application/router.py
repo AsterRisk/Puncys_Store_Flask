@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, request, make_response, render_template, render_template_string
-from forms import LoginForm, AppointmentForm, RegistrationForm, OrderForm
-from setup import query
+from .forms import LoginForm, AppointmentForm, RegistrationForm, OrderForm
+from .setup import query
 
 app = Flask(__name__,
             template_folder="../templates/",

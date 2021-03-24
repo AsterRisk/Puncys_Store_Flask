@@ -14,7 +14,6 @@ except Exception as e:
 try:
     engine = create_engine(app.config['DATABASE_URI'], echo = False)
 except Exception as e:
-    
     print("An error occurred, error details:\n---------------------\n{}\n---------------------\n".format(e))
     exit(1)
 meta = MetaData()

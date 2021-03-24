@@ -4,7 +4,6 @@ from wtforms import StringField, PasswordField, DateField, TimeField, SubmitFiel
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_wtf import FlaskForm
 from .setup import query
-
 from wtforms.validators import DataRequired, Email
 
 class LoginForm(FlaskForm):

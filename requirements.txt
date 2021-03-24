@@ -6,3 +6,5 @@ flask-sessions
 wtforms
 wtforms.validators
 email_validator
+flask-login
+mysqlclient
