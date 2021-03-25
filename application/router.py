@@ -1,18 +1,19 @@
 from flask import Flask, redirect, url_for, request, make_response, render_template, render_template_string
+from flask_login import  LoginManager
 from .forms import LoginForm, AppointmentForm, RegistrationForm, OrderForm
 from .setup import query
+from .models import User
+from .__init__ import app, login_manager
 
-app = Flask(__name__,
-            template_folder="../templates/",
-            static_folder="../static/"
-            )
-app.config['DATABASE_URI'] = 'mysql://root:@localhost/puncys_store_1' # Database connection, don't touch this
-app.config['SECRET_KEY'] = '18078bdd7193ed2a57674fd5e65c446e2ba9664e7008fe54ad02a58c9a622e53'
 app.debug = True # Outputs statements to terminal, makes it easier to see what's going on
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 @app.route("/", methods = ['POST', 'GET']) # Login page. POST returns the form, POST attempts to login the
                                            # user with the information provided 
-# templates\Login_v1\login.html <-- Relative path
+                                           # templates\Login_v1\login.html <-- Relative path
 def login():
     form = LoginForm()
     if request.method == 'POST':
@@ -89,3 +90,6 @@ def sales_report():
     else:
         return make_response("Invalid Request Method.", 400)
     pass
+
+if __name__=="__main__":
+    app.run(debug = app.config['DEBUG'], host=app.config['SERVER_ADDRESS'], port= app.config['PORT'])
