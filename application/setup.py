@@ -62,7 +62,7 @@ logins = Table(
     'logins', meta,
     Column('user_id', Unicode(5), primary_key = True),
     Column('email', String(40)),
-    Column('password_hash', String(64)),
+    Column('password_hash', String(95)),
     Column('salt', Integer),
     Column('is_active', Boolean)
 )

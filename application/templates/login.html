@@ -30,11 +30,11 @@
 					<img src="{{url_for('static', filename = 'images/img-01.png')}}" alt="IMG">
 				</div>
 
-				<form class="login100-form validate-form">
+				<form class="login100-form validate-form" method = "POST" action = "{{url_for('login')}}">
 					<span class="login100-form-title">
 						Member Login
 					</span>
-
+					{{ form.csrf_token }}
 					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
 						<!--<input class="input100" type="text" name="email" placeholder_="Email" required = 'required'>-->
                         {{  form.email(class_ = "input100")  }}

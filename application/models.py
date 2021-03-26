@@ -104,7 +104,7 @@ class Login(db.Model, UserMixin):
         self.password_hash = generate_password_hash((password+str(salt)), method = 'pbkdf2:sha256')
         self.salt = salt
         self.is_active = True
-
+        print(password+str(salt))
         ins = logins.insert().values(email = self.email, user_id = self.user_id, password_hash = self.password_hash, salt = self.salt, is_active = self.is_active)
         query(ins)
 

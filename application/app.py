@@ -6,7 +6,7 @@ from .setup import query
 from random import randint
 import datetime
 from .__init__ import app, login_manager, csrf
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 session = {}
 
@@ -22,7 +22,7 @@ def loginUser(user):
     session['DOB'] = user.dob
     session['clearance'] = user.clearance
 
-def logoutUser(user):
+def logoutUser():
     session['user_id'] = None
     session['first_name'] = None
     session['last_name'] = None
@@ -41,12 +41,21 @@ def login():
         if form.validate_on_submit():
             if form.email.data:
                 email = form.email.data
-                user = query ("Select * from logins where email = {};".format(email)).first()
+                user = query("Select * from logins where email = '{}';".format(email)).first()
                 print(user)
-                if (user and check_password_hash(user.password_hash, (form.password.data + str(user.salt)))):
+                temp = (form.password.data + str(user.salt))
+                print(temp)
+                if (user and check_password_hash(user.password_hash, temp)):
                     loginUser(user)
                     flash("Login successful!")
                     return redirect(url_for('home'))
+                else:
+                    
+                    print(check_password_hash(user.password_hash, temp))
+                    flash("Login failed. Please check your credentials.", "danger")
+                    print("Login failed. Please check your credentials.")
+                    return redirect(url_for('login'))
+                    
         pass
     elif request.method == 'GET':
         #headers = {'Content-Type': "application/json"}
@@ -54,6 +63,12 @@ def login():
     else:
         return make_response("Invalid Request Method.", 400)
     pass
+
+@app.route("/logout")
+def logout():
+    logoutUser()
+    flash("You have been logged out", "danger")
+    return redirect(url_for('login'))
 
 @login_manager.user_loader
 def load_user(id):
