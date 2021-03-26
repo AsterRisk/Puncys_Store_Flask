@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 
+<link rel = "stylesheet" href = "{{url_for('static', filename = 'css/styles.css')}}"/>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<link href=".{{url_for('static', filename = 'css/ui.css')}}" rel="stylesheet" type="text/css"/>
+<link href=".{{url_for('static', filename = 'css/order.css')}}" rel="stylesheet" type="text/css"/>
+<link href=".{{url_for('static', filename = 'css/responsive.css')}}" rel="stylesheet" media="only screen and (max-width: 1200px)" />
+
 <html>
     <head>
         <!--TEMPLATE FROM: https://mdbootstrap.com/snippets/jquery/pjoter-2-0/747937 -->
         <title>Order Form</title>
-        <link rel = "stylesheet" href = "{{url_for('static', filename = 'css/styles.css')}}"/>
+        
         <srcipt src = "jquery-3.2.1.min.js"></srcipt>
         <script src = "{{url_for('static', filename = 'js/script.js')}}"></script>
         <!-- -->
         <!-- Datepicker JS and CSS provided by https://jqueryui.com/datepicker/-->
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-        <link rel="stylesheet" href="/resources/demos/style.css">
-        <link href="{{url_for('static', filename = 'css/ui.css')}}" rel="stylesheet" type="text/css"/>
-        <link href="{{url_for('static', filename = 'css/order.css')}}" rel="stylesheet" type="text/css"/>
-        <link href="{{url_for('static', filename = 'css/responsive.css')}}" rel="stylesheet" media="only screen and (max-width: 1200px)" />
+        
+        
+        
+        
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <!-- -->
@@ -21,20 +27,25 @@
         <script>
             $(document).ready(function()
             {
-                    $( "#datepicker" ).datepicker();
-                    $("#new-measurements").change(function()
+                    $("#datepicker").datepicker();
+                    $("#datepicker").change(function()
+                    {
+                      console.log(this.value)
+                    });
+                    $("#new_meas").change(function()
                         {
+                            console.log("hello")
                             if(this.checked == true)
                             {
                                 $('#existing-measures').hide();
                                 $('#new-measures').show();
-                                $('#set-meas-name').attr("required", true);
+                                $('#measurements').show();
                             }
                             else
                             {
                                 $('#existing-measures').show();
                                 $('#new-measures').hide();
-                                $('#set-meas-name').attr("required", false);
+                                $('#measurements').show();
                             }
 
                         }
@@ -45,13 +56,18 @@
         <script>
             $(document).ready(function()
             {
+              $(' .shirt').hide();
+              $(' .shorts').hide();
+              $(' .skirt').hide();
+              $(' .blouse').hide();
+              $(' .pants').hide();
                     $("#job_type").change(function()
                         {
                             var val = $(this).children("option:selected").val().split("-");
                             console.log(val)
                             if(val[0] === "Pants")
                             { 
-                                $('#measurements').show();
+                                
                                 $(' .shirt').hide();
                                 $(' .shorts').hide();
                                 $(' .skirt').hide();
@@ -68,7 +84,7 @@
                             if(val[0] === "Blouse")
                             {
                                 console.log("Blouse");
-                                $('measurements').show();
+                                
                                 $(' .shirt').hide();
                                 $(' .shorts').hide();
                                 $(' .skirt').hide();
@@ -82,7 +98,6 @@
                             }
                             if(val[0] === "Shirt")
                             {
-                                $('#measurements').show();
                                 
                                 $(' .shorts').hide();
                                 $(' .skirt').hide();
@@ -98,28 +113,46 @@
                             }
                             if(val[0] === "Skirt")
                             {
-                                $('.skirts').show().siblings().hide();
-                                $('.skirts').children().children().attr("required", true);
+                                
+                                $(' .shorts').hide();
+                                $(' .blouse').hide();
+                                $(' .pants').hide();
+                                $(' .shirt').hide();
+                                $(' .skirt').show();
+                                $('#undecided').hide()
+                                $('.shirts').children().children().attr("required", true);
                                 $('#set-meas-name').show();
                                 $('#appt-needed').show();
-                                $('.skirts').siblings().children().children().attr("required", false);
+                                $('.shirts').siblings().children().children().attr("required", false);
                                 $('#set-meas-name').attr("required", true);
                             }
                             if(val[0] === "Shorts")
                             {
-                                $('.shorts').show().siblings().hide();
-                                $('.shorts').children().children().attr("required", true);
+                                $(' .skirt').hide();
+                                $(' .blouse').hide();
+                                $(' .pants').hide();
+                                $(' .shirt').hide();
+                                $(' .shorts').show();
+                                $('#undecided').hide()
+                                $('.shirts').children().children().attr("required", true);
                                 $('#set-meas-name').show();
                                 $('#appt-needed').show();
-                                $('.shorts').siblings().children().children().attr("required", false);
+                                $('.shirts').siblings().children().children().attr("required", false);
                                 $('#set-meas-name').attr("required", true);
                             }
                             if(val[0] == "Select a job type...")
                             {
-                                $('measurements').hide();
-                                $('#undecided').show().siblings().hide();
-                                $('#set-meas-name').hide();
+                                $(' .shorts').hide();
+                                $(' .skirt').hide();
+                                $(' .blouse').hide();
+                                $(' .pants').hide();
+                                $(' .shirt').show();
+                                $('#undecided').hide()
+                                $('.shirts').children().children().attr("required", true);
+                                $('#set-meas-name').show();
                                 $('#appt-needed').show();
+                                $('.shirts').siblings().children().children().attr("required", false);
+                                $('#set-meas-name').attr("required", true);
                             }
                             var type = ($(this).children("option:selected").attr('name'));
                             
@@ -132,46 +165,28 @@
         
     </head>
     <body>
-        <!-- 
-            Needs to perform the following SQL statements:
-            SELECT * from USERS where user_id = session_id; ||
-            SELECT * from ORDERS where order_id = temp_id;  || for replay an order
-        -->
-        <!--
-            <?php
-                $sql = "select * from users where user_id = " . $_SESSION['id'] . ";";
-                $conn->prepare($sql);
-                $user_data = $conn->query($sql)->fetch_assoc();
-                if($_GET)
-                {
-                    $sql = "select * from orders where order_id = " . $_GET['temp'] . ";";
-                    $conn->prepare($sql);
-                    $template = $conn->query($sql)->fetch_assoc();
-                }
-            ?> 
-        -->
-        <!--COMMENT TO SET USER DATA FROM DATAVASE-->
         
-        <div class = "headbar">
+        
+        <!--<div class = "headbar">
             <div class="col-lg-4 col-sm-6 col-12" >
                 <div class="widgets-wrap float-md-right">
-                    <div class="widget-header icontext">
+                    <div class="widget-header icontext">-->
                         <!--SET THE PPA FROM DATABASE-->
                         <!--{{url_for('static', filename = ppa)}}-->
-                        <a href="#" ><img class = "img" src = ""></a>
+                        <!--<a href="#" ><img class = "img" src = ""></a>
                         <div class="text" class = "name">
-                            <span class="text-muted mute" >
-                                <!-- <?php echo ucwords(strtolower($user_data['first_name'])); ?> -->
-                                Welcome, <!--Pull First Name from user_data-->!</span>
+                            <span class="text-muted mute" >-->
+                                
+                                <!--Welcome, Pull First Name from user_data--><!--</span>
                             <div> 
                                 <a href="logout" class = "sign-out">Sign Out</a> 
                             </div>
                         </div>
                     </div>
-                </div> <!-- widgets-wrap.// -->
-            </div>
-        </div>
-            
+                </div>  widgets-wrap.// -->
+           <!-- </div>
+        </div>-->
+
         <form id = "order-form" method = "POST" action = "order" class="order-form my-4 mx-4 body">
           {{ form.csrf_token }}
                 <div class="container pt-4">
@@ -191,50 +206,9 @@
                           <label class="order-form-label">Name</label>
                         </div>
                         <div class="col-12 col-sm-6">
-                        <!--First name field, default value user's name or name on the order in case of replay-->
-                        <!-- <?php 
-                            if($_GET)
-                            {
-                                if($template)
-                                {
-                                    $input = '<input class="order-form-input" name = "fname" value="'.ucfirst(strtolower($template['first_name'])).'" required = "required"/>';
-                                }
-                                else
-                                {
-                                    $input = '<input class="order-form-input" name = "fname" value="'.ucfirst(strtolower($user_data['first_name'])).'" required = "required"/>';
-                                }
-                            }
-                            else
-                            {
-                                $input = '<input class="order-form-input" name = "fname" value="'.ucfirst(strtolower($user_data['first_name'])).'" required = "required"/>';
-                            }
-                            
-                            echo $input;
-                        ?> -->
-                            {{  form.fname(class_ = "order-form-input")  }}
+                        {{  form.fname(class_ = "order-form-input")  }}
                         </div>
                         <div class="col-12 col-sm-6 mt-2 mt-sm-0">
-                          <!--First name field, default value user's name or name on the order in case of replay-->
-                          <!-- <?php
-                            if($_GET)
-                            {
-                                if($template)
-                                {
-                                    $input = '<input class="order-form-input" name = "lname" value="'.ucfirst(strtolower($template['last_name'])).'" required/>';
-
-                                }
-                                else
-                                {
-                                    $input = '<input class="order-form-input" name = "lname" value="'.ucfirst(strtolower($user_data['last_name'])).'" required/>';
-                                }
-                            }
-                            else
-                            {
-                                $input = '<input class="order-form-input" name = "lname" value="'.ucfirst(strtolower($user_data['last_name'])).'" required/>';
-                            }   
-
-                            echo $input;
-                          ?> -->
                           {{  form.lname(class_ = "order-form-input")  }}
                         </div>
                       </div>
@@ -244,43 +218,7 @@
                           <label class="order-form-label">Type of garment you want to order</label>
                         </div>
                         <div class="col-12">
-                          <!-- <select id = "job-type" name = "job-type" class = "order-form-input">
-                            <option value = '0'>------------</option> -->
-                            <!-- CODE TO PULL THE LIST OF JOB TYPES FROM THE PRESETS TABLE -->
-                            <!-- <?php
-                              $sql = "select preset_id, type from job_presets where preset_id > 1 order by preset_id ASC;";
-                              $conn->prepare($sql);
-                              $jobs = $conn->query($sql);
-                              foreach($jobs as $job)
-                              {
-                                  if($_GET)
-                                  {
-                                      if($template)
-                                      {
-                                          if($template['type'] == $job['type'])
-                                          {
-                                              $option = "<option value = ".$job['preset_id']." name = ".$job['type']." selected = 'selected'>" .$job['type']. "</option>";
-                                          }
-                                          else
-                                          {
-                                              $option = "<option value = ".$job['preset_id']." name = ".$job['type'].">" .$job['type']. "</option>";
-                                          }
-                                      }
-                                  }
-                                  else
-                                  {
-                                      $option = "<option value = ".$job['preset_id']." name = ".$job['type'].">" .$job['type']. "</option>";
-                                  }
-                                  
-                                  
-                                  echo $option;
-                              }
-                              
-                            ?> -->
-                            <!--
-                          </select> -->
                           {{  form.job_type(class_ = "order-form-input")  }}
-                          <!-- <input id = "job_type" name = "job_type" type = "text" value = "blank" hidden/> -->
                           {{  form.job_type_text(class_ = "hidden")  }}
                         </div>
                       </div>
@@ -292,96 +230,20 @@
                         <div class="row mt-3 mx-4">
                             <div class="col-12">
                               <div class="form-check">
-                                
-                                <!-- <?php
-                                    if($_GET)
-                                    {
-                                        if($template['measurements_id'] == 1)
-                                        {
-                                    
-                                    
-                                        ?>
-                                        <input type="checkbox" class="form-check-input" name="new-measurements" id="new-measurements" checked value = 1>
-                                <?php
-                                    }
-                                    else
-                                    {
-                                        ?>
-                                        <input type="checkbox" class="form-check-input" name="new-measurements" id="new-measurements" value = 1>
-                                  <?php
-                                    }
-                                    }
-                                    else
-                                    {
-                                        ?>
-                                        <input type="checkbox" class="form-check-input" name="new-measurements" id="new-measurements" value = 1>
-                                <?php
-                                    }
-                                ?> -->
                                 {{  form.new_meas(class_ = "form-check-input")  }}
                                 <label for="validation" class="form-check-label">Use new Measurements?</label>
                               </div>
                             </div>
                         </div>
                         <div class="col-12" id = "existing-measures" hidden>
-                          <!-- <select id = "preset_measurements" name = "measurement_id" class="order-form-input" placeholder=" ">
-                          <option value = '0'>Default Measurements</option>-->
-                          <!-- <?php
-                              $sql = "select measurement_id, name from measurements where user_id = ".$_SESSION['id']." order by name ASC;";
-                              $conn->prepare($sql);
-                              $measurements = $conn->query($sql);
-                              foreach($measurements as $measure)
-                              {
-                                  if($template)
-                                  {
-                                      if($template['measurement_id'] == $measure['measurements_id'])
-                                      {
-                                          $option = "<option value = '".$measure['measurements_id']."' selected = 'selected'>" .$measure['name']. "</option>";
-                                      }
-                                      else
-                                      {
-                                          $option = "<option value = '".$measure['measurements_id']."'>" .$measure['name']. "</option>";
-                                      }
-                                  }
-                                  
-                                  echo $option;
-                              }
-                              
-                            ?> -->
-                            <!--
-                            </select> -->
                             {{  form.meas_select(class_ = "order-form-input")}}
                         </div>
                         <div class = "col-12" id = "new-measures">
+                            <div class = "col-12">
+                              <label>Name this measurement: </label>
+                            </div>
                             <div id = "set-meas-name">
                                 <div class="col-12 col-sm-6">
-                                    <!-- <?php
-                                        if($_GET)
-                                        {
-                                            if($template)
-                                            {
-                                                $sql = "select * from measurements where measurement_id = " . $template['measurements_id'] . ";";
-                                                $conn->prepare($sql);
-                                                $measurement = $conn->query($sql)->fetch_assoc();
-                                                ?>
-                                                <input class="order-form-input" name = "meas-name" id = "meas-name" value = "<?php echo $measurement['name']; ?>"/>
-                                        <?php
-                                            }
-                                            else
-                                            {
-                                                ?>
-                                                <input class="order-form-input" name = "meas-name" id = "meas-name" placeholder = "What would you like to save this preset as?"/>
-                                        <?php
-                                            }
-                                    
-                                        }
-                                        else
-                                        {
-                                            ?>
-                                            <input class="order-form-input" name = "meas-name" id = "meas-name" placeholder = "What would you like to save this preset as?"/>
-                                    <?php
-                                        }
-                                      ?>   -->
                                     {{  form.meas_name(class_ = "order-form-input")  }}
                                 </div>
                             </div>
@@ -408,14 +270,14 @@
                                 </div>
 
                                 <div class="col-12">
-                                  <label class="order-form-label">Waist</label>
+                                  <label class="order-form-label shirt pants skirt shorts blouse">Waist</label>
                                 </div>
                                 <div class="col-12 col-sm-6 shirt pants skirt shorts blouse">
                                     <!-- <input class="order-form-input" name = "s_waist"/> -->
                                     {{  form.waist(class_ = "order-form-input shirt pants skirt shorts blouse")  }}
                                 </div>
                                 <div class="col-12">
-                                  <label class="order-form-label">Hip</label>
+                                  <label class="order-form-label shirt pants skirt shorts blouse">Hip</label>
                                 </div>
                                 <div class="col-12 col-sm-6 shirt pants skirt shorts blouse">
                                     <!-- <input class="order-form-input" name = "s_hip"/> -->
@@ -608,4 +470,5 @@
                 </div>
         </form>
     </body>
+    
 </html>
