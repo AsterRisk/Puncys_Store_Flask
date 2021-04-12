@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, request, make_response, render_template, render_template_string, session, flash
 from flask_login import login_user, logout_user, current_user, login_required, login_manager
 from .models import Login, User, Order, Appointment, Measurement
-from .forms import LoginForm, AppointmentForm, RegistrationForm, OrderForm
+from .forms import LoginForm, AppointmentForm, RegistrationForm, OrderForm, SalesForm
 from .setup import query
 from random import randint
 import datetime
@@ -256,20 +256,34 @@ def bill():
 def appointment():
     form = AppointmentForm()
     if request.method == 'POST':
-        pass
+        try:
+            user_id = session['user_id']
+        except:
+            user_id = 1
+        appoint = Appointment(['1'],request.form['date'], request.form['time'])
+        flash('Appointment was successfully made!')
+        return redirect('/home')
     elif request.method == 'GET':
-        return render_template("appointment.html")
+        return make_response(render_template("appointment.html", form = form))
     else:
         return make_response("Invalid Request Method.", 400)
     pass
 
-@app.route("/sales_report", methods = ['POST', 'GET'])
+@app.route("/sales", methods = ['POST', 'GET'])
 #@login_required
 def sales_report():
+    form = SalesForm()
     if request.method == 'POST':
-        pass
+        date_from=form.date_from.data
+        date_to=form.date_to.data
+
+        orders = query("SELECT date_placed, COUNT(type) AS total_unit , first_name, SUM(est_cost) AS total_sales FROM orders WHERE date_placed >= '{}' AND date_placed<= '{}' GROUP BY last_name, date_placed;".format(date_from, date_to)).fetchall()
+
+        return render_template('sales_report.html', orders=orders)
+#return make_response(render_template("sales.html", form=form))
     elif request.method == 'GET':
-        pass
+        return make_response(render_template("sales.html", form=form))
     else:
         return make_response("Invalid Request Method.", 400)
     pass
+    
