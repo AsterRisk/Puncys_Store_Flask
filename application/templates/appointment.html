@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Appointment</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="colorlib.com">
+
+
+<link href="static/css/material-design-iconic-font.css" rel="stylesheet">
+
+<link href="static/css/appointment.css" rel="stylesheet"> 
+
+
+ 
+
+</head>
+<body>
+<div class="wrapper">
+<form action="/appointments" id="wizard" method="POST">
+    {{form.csrf_token}}
+
+<h2></h2>
+<section>
+<div class="inner">
+<div class="image-holder">
+
+<img src="static/images/app_bg.jpg" alt="IMG">
+</div>
+<div class="form-content">
+<div class="form-header">
+<h3>Appointment</h3>
+</div>
+<p>Please fill with your details</p>
+<div class="form-row">
+
+
+</div>
+<div class="form-row">
+    <div class="form-holder">
+    <lable for="time">Time (eg 12:00)</lable>
+    {{form.time(class_="appointment-form-input")}} <br>
+    <small>Please select a time between 9:00am-5:00pm.</small>
+    
+<br>
+<br>
+
+<div class="form-row">
+    <div class="form-holder">
+        <label for="date">Date: </label>
+        {{  form.date(class_ = "appointment-form-input datepicker")}}
+<br>
+<br>
+
+        
+    </div>
+</div>
+    <input type="submit" id="btnSubmit" value= "Submit" class="btn"/>
+</div>
+
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+        
+</form>
+
+</div>
+
+
+<script src="static/vendor/jquery-3.3.1.min.js"></script>
+
+
+<script src="static/vendor/jquery.steps.js"></script>
+
+
+<script src="static/js/main1.js"></script>
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-23581568-13');
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"rayId":"63dd64a00aa5042c","si":10,"version":"2021.4.0"}'></script>
+</body>
+</html>
