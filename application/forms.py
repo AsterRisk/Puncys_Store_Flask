@@ -5,6 +5,7 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from flask_wtf import FlaskForm
 from .setup import query
 from wtforms.validators import DataRequired, Email
+from wtforms.fields.html5 import DateField
 
 class LoginForm(FlaskForm):
     email = StringField('email', validators = [DataRequired(), Email()], render_kw={"placeholder":"Email"})
@@ -23,7 +24,8 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('submit')
 
 class AppointmentForm(FlaskForm):
-    date = DateField('date', validators = [DataRequired()], format="%Y-%m-%d", render_kw={"placeholder":"Date"})
+    #user_id = StringField('user_id', validators=[DataRequired()], render_kw={"placeholder": "User ID"})
+    date = DateField('datepicker', validators = [DataRequired()], render_kw={"placeholder":"Date"})
     time = TimeField('time', validators = [DataRequired()], render_kw={"placeholder":"Time"})
     submit = SubmitField('submit')
 
@@ -71,5 +73,12 @@ class OrderForm(FlaskForm):
         # || Submit
         submit = SubmitField('Submit')
 
+
+class SalesForm(FlaskForm):
+    date_from = DateField('date_from', validators = [DataRequired()], format="%Y-%m-%d", render_kw={"placeholder":" Enter Date"})
+    date_to = DateField('date_to', validators = [DataRequired()], format="%Y-%m-%d", render_kw={"placeholder":" Enter Date"})
+
+# || Submit
+submit = SubmitField('Submit')
     
     
