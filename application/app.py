@@ -272,18 +272,21 @@ def appointment():
 @app.route("/sales", methods = ['POST', 'GET'])
 #@login_required
 def sales_report():
-    form = SalesForm()
-    if request.method == 'POST':
-        date_from=form.date_from.data
-        date_to=form.date_to.data
+        form = SalesForm()
+        if request.method == 'POST':
+            date_from=form.date_from.data
+            date_to=form.date_to.data
 
-        orders = query("SELECT date_placed, COUNT(type) AS total_unit , first_name, SUM(est_cost) AS total_sales FROM orders WHERE date_placed >= '{}' AND date_placed<= '{}' GROUP BY last_name, date_placed;".format(date_from, date_to)).fetchall()
+            orders = query("SELECT SUM(est_cost) AS total_sales, date_placed, COUNT(type) AS total_unit , type FROM orders WHERE date_placed >= '{}' AND date_placed<= '{}' GROUP BY date_placed, type;".format(date_from, date_to)).fetchall()
 
-        return render_template('sales_report.html', orders=orders)
-#return make_response(render_template("sales.html", form=form))
-    elif request.method == 'GET':
-        return make_response(render_template("sales.html", form=form))
-    else:
-        return make_response("Invalid Request Method.", 400)
-    pass
+            grand_total=0
+            for i in orders:
+                grand_total+=(i[0])
+
+            return render_template('sales_report.html', orders=orders, grand_value=grand_total)
+        elif request.method == 'GET':
+            return make_response(render_template("sales.html", form=form))
+        else:
+            return make_response("Invalid Request Method.", 400)
+        pass
     
