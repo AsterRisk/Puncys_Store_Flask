@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<!--Developed by: 620122579-->
 <link rel = "stylesheet" href = "{{url_for('static', filename = 'css/styles.css')}}"/>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="/resources/demos/style.css">
@@ -10,6 +10,7 @@
 <html>
     <head>
         <!--TEMPLATE FROM: https://mdbootstrap.com/snippets/jquery/pjoter-2-0/747937 -->
+        
         <title>Order Form</title>
         
         <srcipt src = "jquery-3.2.1.min.js"></srcipt>
@@ -167,27 +168,14 @@
     <body>
         
         
-        <!--<div class = "headbar">
-            <div class="col-lg-4 col-sm-6 col-12" >
-                <div class="widgets-wrap float-md-right">
-                    <div class="widget-header icontext">-->
-                        <!--SET THE PPA FROM DATABASE-->
-                        <!--{{url_for('static', filename = ppa)}}-->
-                        <!--<a href="#" ><img class = "img" src = ""></a>
-                        <div class="text" class = "name">
-                            <span class="text-muted mute" >-->
-                                
-                                <!--Welcome, Pull First Name from user_data--><!--</span>
-                            <div> 
-                                <a href="logout" class = "sign-out">Sign Out</a> 
-                            </div>
-                        </div>
-                    </div>
-                </div>  widgets-wrap.// -->
-           <!-- </div>
-        </div>-->
-
-        <form id = "order-form" method = "POST" action = "order" class="order-form my-4 mx-4 body">
+        <!--Header goes here-->
+        <a href = "{{url_for('home')}}">Home</a>
+        <a href = "{{url_for('view_orders')}}">View Orders</a>
+        <a href = "{{url_for('logout')}}">Logout</a>
+        <br>
+        <br>
+        <br>
+        <form id = "order-form" method = "POST" action = "order" class="order-form my-4 mx-4 body" style="margin-left:145px;">
           {{ form.csrf_token }}
                 <div class="container pt-4">
 

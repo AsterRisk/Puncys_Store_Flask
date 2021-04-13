@@ -1526,9 +1526,7 @@ pre code {
   vertical-align: bottom;
   border-bottom: 2px solid #dee2e6;
 }
-.table tbody + tbody {
-  border-top: 2px solid #dee2e6;
-}
+
 
 .table-sm th,
 .table-sm td {
@@ -5413,7 +5411,7 @@ a.badge-gray-light:focus, a.badge-gray-light.focus {
   border-color: #4e4e4e;
 }
 
-.close {
+/*.close {
   float: right;
   font-size: 1.5rem;
   font-weight: 600;
@@ -5441,7 +5439,7 @@ button.close {
 
 a.close.disabled {
   pointer-events: none;
-}
+}*/
 
 .toast {
   max-width: 350px;
@@ -10086,7 +10084,7 @@ blockquote {
     display: table-header-group;
   }
 
-  tr,
+  
 img {
     page-break-inside: avoid;
   }
@@ -10150,5 +10148,9 @@ h3 {
     border-color: #dee2e6;
   }
 }
+
+
+
+/*Edit from Kyle Burke, 620122579
 
 /*# sourceMappingURL=bootstrap.css.map */

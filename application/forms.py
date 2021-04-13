@@ -27,6 +27,10 @@ class AppointmentForm(FlaskForm):
     time = TimeField('time', validators = [DataRequired()], render_kw={"placeholder":"Time"})
     submit = SubmitField('submit')
 
+class ChangeStateForm(FlaskForm):
+    queries = StringField("state-queries")
+    submit = SubmitField('Save Changes', id = 'save-changes')
+
 class OrderForm(FlaskForm):
     
     
@@ -69,7 +73,7 @@ class OrderForm(FlaskForm):
         job_type_text = StringField('job_type_text', validators = [], render_kw = {})
 
         # || Submit
-        submit = SubmitField('Submit')
+        submit = SubmitField('Order')
 
     
     

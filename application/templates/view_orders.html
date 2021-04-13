@@ -1,0 +1,367 @@
+{% extends "base.html" %} 
+<!--Developed by: 620122579-->
+{% block css %} 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/view_orders.css') }}">
+    <style>
+        .modal{
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content{
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+#order-table{
+      width:100%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+table{
+  width: 100%;
+}
+
+main{
+  width: 100%;
+}
+
+td{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  border: 1px;
+  border: solid #000;
+}
+
+th{
+  border: 1px;
+  border: solid #000;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.table-head{
+  background-color: rgb(13, 0, 83);
+  color: #fff;
+  text-align:center;
+}
+
+.state{
+  
+  border: solid 1px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 15px;
+  padding: 5px;
+  width :100%;
+}
+
+.new-state{
+  
+  border: solid 1px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 15px;
+  padding: 5px;
+  width :100%;
+}
+
+.pending{
+  background-color: #fff;
+  border-color: #888;
+  color: #888;
+}
+
+.pending:hover{
+  background-color: #888;
+  border-color: #fff;
+  color: #fff;
+}
+
+.in-progress{
+  background-color: rgb(255, 238, 0);
+  color: rgb(0, 0, 0);
+  border-color: rgb(255, 238, 0);
+}
+
+.in-progress:hover{
+  background-color: rgb(224, 202, 0);
+  color: #000;
+  border-color: rgb(224, 202, 0);
+}
+
+.completed{
+  background-color: rgb(15, 241, 46);
+  border-color: rgb(15, 241, 46);
+  color: #fff;
+}
+
+.completed:hover{
+  background-color: rgb(136, 241, 136);
+  border-color: rgb(136, 241, 136);
+  color: #fff;
+}
+
+.cancelled{
+  background-color: rgb(241, 15, 46);
+  border-color: rgb(241, 15, 46);
+  color: #fff;
+}
+
+.cancelled:hover{
+  background-color: rgb(241, 136, 136);
+  border-color: rgb(241, 136, 136);
+  color: #fff;
+}
+    </style>
+{% endblock %} 
+
+{%  block main %} 
+<br>
+<p>
+	<em><b>Please note:</b> Orders listed as Completed will not be here, but will instead be visible on the bills page.</em>
+<p>
+<hr>
+<table id = "order-table">
+    <tr class = "table-head">
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Contact Number</th>
+        <th>Delivery Address</th>
+        <th>Date Placed</th>
+        <th>Due Date</th>
+        <th>State</th>
+        <th>View Measurements</th>
+        
+    </tr>
+    {% for order in orders %} 
+        
+        <tr>
+            <td>{{order.first_name}}</td>
+            <td>{{order.last_name}}</td>
+            <td>{{order.contact_num}}</td>
+            <td>{{order.delivery_address}}</td>
+            <td>{{order.date_placed}}</td>
+            <td>{{order.due_date}}</td>
+            <td>
+            {% if order.state == "P" %}
+                <span id = "state-{{order.order_id}}" class = "pending state">Pending</span> <!---->
+            {% else %}
+                {% if order.state == "A" %}
+                <span id = "state-{{order.order_id}}" class = "in-progress state">In Progress</span> <!---->
+                {% else %}
+                    {% if order.state == "C" %} 
+                    <span id = "state-{{order.order_id}}" class = "completed state">Completed</span> <!---->
+                    {% else %}
+                        {% if order.state == "D" %}
+                            <span id = "state-{{order.order_id}}" class = "cancelled state">Cancelled</span> <!---->  <!--<span class = "cancelled state">Cancelled</span>-->
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+                
+            </td>
+            <td><button id = "btn-{{order.order_id}}">+</button>
+                <div id="modal-{{order.order_id}}" class = "modal">
+                    <div  id = "measurements-{{order.order_id}}" class = "modal-content">
+                        <span class="close" id = "close-{{order.order_id}}">&times;</span>
+                        <table>
+                            <tr class = "table-head">
+                                <th>Length </th>
+                                <th>Waist </th>
+                                <th>Hip </th>
+                                <th>Sleeve </th>
+                                <th>Bicep </th>
+                                <th>Armhole </th>
+                                <th>Neck </th>
+                                <th>Shoulder </th>
+                                <th>Across Back </th>
+                                <th>Bust </th>
+                                <th>Bust Point </th>
+                                <th>Ankle </th>
+                                <th>Round Leg </th>
+                                <th>Round Knee </th>
+                                <th>Round Ankle </th>
+                            </tr>
+                            <tr>
+                                <td> {{ measurements[order.measurement_id]['length'] }}      </td> 
+                                <td> {{ measurements[order.measurement_id]['waist'] }}       </td> 
+                                <td> {{ measurements[order.measurement_id]['hip'] }}         </td> 
+                                <td> {{ measurements[order.measurement_id]['sleeve'] }}      </td>
+                                <td> {{ measurements[order.measurement_id]['bicep'] }}       </td>
+                                <td> {{ measurements[order.measurement_id]['armhole'] }}     </td>
+                                <td> {{ measurements[order.measurement_id]['neck'] }}        </td>
+                                <td> {{ measurements[order.measurement_id]['shoulder'] }}    </td>
+                                <td> {{ measurements[order.measurement_id]['across_back'] }} </td>
+                                <td> {{ measurements[order.measurement_id]['bust'] }}        </td>
+                                <td> {{ measurements[order.measurement_id]['bust_point'] }}  </td>
+                                <td> {{ measurements[order.measurement_id]['ankle'] }}       </td>
+                                <td> {{ measurements[order.measurement_id]['round_leg'] }}   </td>
+                                <td> {{ measurements[order.measurement_id]['round_knee'] }}  </td>
+                                <td> {{ measurements[order.measurement_id]['round_ankle'] }} </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <script>
+                    let btn{{order.order_id}} = document.getElementById("btn-{{order.order_id}}")
+                    let modal{{order.order_id}} = document.getElementById("modal-{{order.order_id}}")
+                    let span{{order.order_id}} = document.getElementById("close-{{order.order_id}}")
+                    btn{{order.order_id}}.onclick = function() {
+                        console.log("Click!")
+                        modal{{order.order_id}}.style.display = "block";
+                    }
+                    window.onclick = function(event) {
+                        if (event.target == modal{{order.order_id}}) {
+                            modal.style.display = "none";
+                        }
+                    }
+                    span{{order.order_id}}.onclick = function() {
+                        modal{{order.order_id}}.style.display = "none";
+                    }
+                    window.onload = function(){
+                        let states = document.getElementsByClassName("state");
+                        let num = states.length;
+                        let state_modal = document.getElementById("state-modal");
+                        let close_modal = document.getElementById("close-change-state");
+                        let temp;
+                        let modal_title = document.getElementById("modal-title");
+                        let state_btns = document.getElementsByClassName("new-state");
+                        let y = state_btns.length;
+                        let x;
+                        let pend_btn = document.getElementById("pend-btn");                    
+                        let accp_btn = document.getElementById("accp-btn");                
+                        let comp_btn = document.getElementById("comp-btn");                
+                        let canc_btn = document.getElementById("canc-btn");                
+                        let target;
+                        let queries = document.getElementById("queries");
+                        for (x=0;x<num;x++)
+                        {
+                            states[x].addEventListener("click", function(){
+                                state_modal.style.display = "block";
+                                console.log(this.id);
+                                temp = this.id.split("-")[1];
+                                modal_title.innerHTML = "Change State for Order: " + temp;
+                            })
+                        }
+                        for (x=0;x<y;x++)
+                        {
+                            state_btns[x].addEventListener("click", function(){
+                                
+                                console.log("Clickk");
+                                target = document.getElementById(("state-" +temp))
+                                console.log("state-" +temp)
+                                
+                                target.innerHTML = this.innerHTML
+                                target.classList.remove(target.classList[0])
+                                target.classList.remove("state")
+                                target.classList.add(this.classList[0])
+                                target.classList.add("state")
+                                console.log(target.classList)
+                                state_modal.style.display = "none";
+                                queries.value += this.classList[2] + "|" + temp + ";";
+                                console.log(queries.value);
+                            })
+                        }
+                        /*pend_btn.addEventListener("click", function(){
+                            console.log("Clickk");
+                            target = document.getElementById(("state-"+temp));
+                            console.log(target.id);
+                            target.innerHTML = pend_btn.innerHTML;
+                            state_modal.style.display = "none";
+                        })
+                        accp_btn.addEventListener("click", function(){
+                            console.log("Clickk");
+                            target = document.getElementById(("state-"+temp));
+                            console.log(target.id);
+                            target.innerHTML = accp_btn.innerHTML;
+                            state_modal.style.display = "none";
+                        })
+                        comp_btn.addEventListener("click", function(){
+                            console.log("Clickk");
+                            target = document.getElementById(("state-"+temp));
+                            console.log(target.id);
+                            target.innerHTML = comp_btn.innerHTML;
+                            state_modal.style.display = "none";
+                        })
+                        canc_btn.addEventListener("click", function(){
+                            console.log("Clickk");
+                            target = document.getElementById(("state-"+temp));
+                            console.log(target.id);
+                            target.innerHTML = canc_btn.innerHTML;
+                            state_modal.style.display = "none";
+                        }) */
+                        close_modal.onclick = function() {
+                            console.log("Click")
+                            state_modal.style.display = "none";
+                        }
+                    }
+                </script>
+            </td>
+            
+        </tr>
+        
+    {% endfor %}
+    
+</table>
+<div class = "modal" id = "state-modal">
+    <div class = "modal-content">
+        <span class="close" id = "close-change-state">&times;</span>
+        <span><h1 id="modal-title"></h1></span>
+        <hr>
+        <span>
+            <p>
+                <em>Click the state you want to change this order to.</em>
+                <br>
+                <b>Click the close button in the top right to cancel the changes.</b>
+            <p>
+        </span>
+        <table>
+            
+            <tr>
+                <td><span id = "pend" class = "pending new-state P">Pending</span></td>
+                <td><span id = "accp" class = "in-progress new-state A">In Progress</td>
+                <td><span id = "comp" class = "completed new-state C">Completed</span></td>
+                <td><span id = "canc" class = "cancelled new-state D">Cancelled</span></td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        
+    </div>
+</div>
+<form action = "/save_changes" method = "POST">
+    <div style ="display:none;">
+        {{  form.csrf_token  }}
+        {{  form.queries  }}
+    </div>
+    <div id = "save-changes" display = "none">
+        {{  form.submit(class_ = "save-changes-btn")  }}
+    <div>    
+</form>        
+{% endblock %}

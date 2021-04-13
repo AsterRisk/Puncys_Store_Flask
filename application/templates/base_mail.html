@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href = "{{url_for('static', filename = 'css/base_mail.css')}}"/>
+        <!---->
+        <style>
+            body{
+                font-family:verdana;
+            }
+
+            .logo{
+                border-radius: 50%;
+                height: 100px;
+                width:  100px;
+                float: left;
+                padding-left:20px;
+            }
+
+            #banner{
+                background-color: rgb(0, 0, 167);
+                color: #fff;
+                display: inline-block;
+                vertical-align:top;
+                padding-top: 20px;
+                padding-bottom: 20px;
+                padding-left: 10px;
+                width: 120%;
+                margin-left: -20px;
+            }
+
+            .business-name{
+                float: left;
+                margin-left:30px;
+                padding-top:10px;
+                font-family:Arial, Helvetica, sans-serif;
+            }
+
+            #order-details{
+                width:100%;
+            }
+
+            #order-details .table-header{
+                background-color: #000;
+                color:#fff;
+            }
+
+            #order-details td{
+                text-align:center;
+                border: solid 1px #000;
+            }
+        </style>
+    </head>
+    <body>
+        <div id = "banner">
+            <img class = "logo" src = "{{url_for('static', filename = 'images/logo.png')}}"/>
+            <!---->
+            <h1 class = "business-name">Puncy's Store</h1>
+        </div>
+        <br>
+        <br>
+        <h2>Hey there, {{ first_name }}</h2>
+        <p>
+            Thanks for making it Puncy's! We received your order, here are the details we got:
+        </p>
+        <table id = "order-details">
+            <tr class = "table-header">
+                <th>Clothing Type</th>
+                <th>Size</th>
+                <th>Due Date</th>
+                <th>Estimated Cost</th>
+            </tr>
+            <tr>
+                <td>{{ order_type }}</td>
+                <td>{{ order_size }}</td>
+                <td>{{ due_date }}</td>
+                <td>${{ est_cost }} </td>
+            </tr>
+        </table>
+        <br>
+        <p>
+            <em>
+                <b>Please note!</b> Your order has not yet been confirmed. It is just on our system. Once it's confirmed (or rejected) we'll let you know!
+            </em>
+        </p>
+        <hr>
+        <p>
+            If we got anything wrong with the order details or you want to cancel it, please be sure to call us at (876) 555-5555!
+        </p>
+    </body>
+</html>

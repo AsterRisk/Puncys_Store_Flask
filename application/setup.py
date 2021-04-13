@@ -20,7 +20,7 @@ meta = MetaData()
 
 
 def query(sql):
-    print("Query: '{}'".format(sql))
+    
     results = "An error occurred.\n"
     with engine.connect() as connection:
         try:

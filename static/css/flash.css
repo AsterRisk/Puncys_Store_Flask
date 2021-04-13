@@ -1,0 +1,33 @@
+
+.alert{
+    width:80%;
+    border: solid 1px;
+    z-index: 1;
+    box-shadow: 3px 5px 4px #ccc;
+    margin-left:40px;
+    border-radius:5px;
+    padding:5px;
+    margin-bottom:10px;
+    background-color: rgb(255, 246, 166);
+    color:rgb(255, 208, 0);
+    border-color: rgb(255, 208, 0);
+}
+
+.alert-danger{
+    background-color: rgb(252, 198, 198);
+    color:red;
+    border-color: red;
+}
+
+.alert-success{
+    background-color: rgb(200, 250, 219);
+    color:rgb(56, 214, 8);
+    border-color: rgb(75, 247, 22);
+}
+
+.close-flash{
+    float:right;
+    padding-right:5px;
+    font-weight: bold;
+    color:black;
+}

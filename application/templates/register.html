@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--Developed by: 620122579-->
 <html lang="en">
 <head>
 	<title>Register - Puncy's Store Online</title>
@@ -6,6 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->	
 	<link rel="icon" type="image/png" href="{{url_for('static', filename = 'images/icons/favicon.ico')}}"/>
+	<link rel = "stylesheet" href="{{url_for('static',filename = 'css/font-awesome-4.7.0/css/font-awesome.min.css')}}"/>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href=" {{url_for('static', filename = 'vendor/bootstrap/css/bootstrap.min.css')}}">
 <!--===============================================================================================-->
@@ -31,10 +33,13 @@
         <script src = "{{url_for('static', filename = 'js/script.js')}}"></script>
 </head>
 <body>
-	
+	{% include "flashed_messages.html" %}
 	<div class="limiter">
 		<div class="container-login100">
+			<span><h1 style = "color:#fff;"><i>Puncy's Store Online</i></h1></span>
 			<div class="wrap-login100">
+				
+				<br>
 				<div class="login100-pic js-tilt" data-tilt>
                     
 					<img src=" {{url_for('static', filename = 'images/img-01.png')}}" alt="IMG">
@@ -49,14 +54,18 @@
                         <!--<input class="input100" type="text" name="fname" placeholder_="First Name" required = 'required'>-->
                         {{  form.first_name(class_ = "input100")  }}
 						<span class="focus-input100"></span>
-						
+						<span class="symbol-input100">
+							<i class="fa fa-user-circle-o" aria-hidden="true"></i>
+						</span>
 					</div>
                     
                     <div class="wrap-input100 validate-input">
                         <!--<input class="input100" type="text" name="lname" placeholder_="Last Name" required = 'required'>-->
                         {{  form.last_name(class_ = "input100")  }}
 						<span class="focus-input100"></span>
-						
+						<span class="symbol-input100">
+							<i class="fa fa-user-circle-o" aria-hidden="true"></i>
+						</span>
 					</div>
                     
                     <div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
@@ -73,6 +82,9 @@
                         {{  form.telephone(class_ = "input100")  }}
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
+							<span class="symbol-input100">
+								<i class="fa fa-phone" aria-hidden="true"></i>
+							</span>
 						</span>
 					</div>
                     
@@ -81,6 +93,9 @@
 						{{  form.addr(class_ = "input100")  }}
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
+							<span class="symbol-input100">
+								<i class="fa fa-home" aria-hidden="true"></i>
+							</span>
 						</span>
 					</div>
                     
@@ -89,6 +104,9 @@
                         {{  form.dob(class_ = "input100 order-form-input datepicker")  }}
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
+							<span class="symbol-input100">
+								<i class="fa fa-birthday-cake" aria-hidden="true"></i>
+							</span>
 						</span>
 					</div>
 					<div class="wrap-input100 validate-input" data-validate = "Password is required">

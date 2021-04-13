@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href = "{{url_for('static', filename = 'css/base_mail.css')}}"/>
+        <!---->
+        <style>
+            body{
+                font-family:verdana;
+            }
+
+            .logo{
+                border-radius: 50%;
+                height: 100px;
+                width:  100px;
+                float: left;
+                padding-left:20px;
+            }
+
+            #banner{
+                background-color: rgb(0, 0, 167);
+                color: #fff;
+                display: inline-block;
+                vertical-align:top;
+                padding-top: 20px;
+                padding-bottom: 20px;
+                padding-left: 10px;
+                width: 120%;
+                margin-left: -20px;
+            }
+
+            .business-name{
+                float: left;
+                margin-left:30px;
+                padding-top:10px;
+                font-family:Arial, Helvetica, sans-serif;
+            }
+
+            #order-details{
+                width:100%;
+            }
+
+            #order-details .table-header{
+                background-color: #000;
+                color:#fff;
+            }
+
+            #order-details td{
+                text-align:center;
+                border: solid 1px #000;
+            }
+        </style>
+    </head>
+    <body>
+        <div id = "banner">
+            <img class = "logo" src = "{{url_for('static', filename = 'images/logo.png')}}"/>
+            <!---->
+            <h1 class = "business-name">Puncy's Store</h1>
+        </div>
+        <br>
+        <br>
+        <h2>Hey there, {{ first_name }}</h2>
+        <p>
+            There's been an update with your {{ obj }}!
+        </p>
+        {% if obj == "order" %}
+            {% if (new_state == "C") or (new_state == "D")  %}
+                {% if (new_state == "C") %} 
+                    <p>Good news! Your order is complete and is ready for pick up! If you'd like us to deliver it to you instead, please call us at the number below and confirm your delivery address.</p>
+                {% endif %}
+                {% if (new_state == "D") %}
+                    <p>Sorry, we are unable to take your order at this time. Thanks for choosing Puncy's Store, and we hope to have your support in the future!</p>
+                {% endif %}
+            {% endif %}
+            {% if (new_state == "P") or (new_state == "A")  %}
+                {% if (new_state == "P") %}
+                    <p>Sorry, we had to temporarily move your order to Pending due to some unforseen circumstances. If you give us some time, we should be able to take it on later, so please bear with us!</p>
+                {% endif %} 
+                {% if (new_state == "A") %} 
+                    <p>Good news! Your order has been accepted and we've started production on it! Just to confirm, we've placed the order details below.</p>
+                    <br>
+                    <table id = "order-details">
+                        <tr class = "table-header">
+                            <th>Clothing Type</th>
+                            <th>Due Date</th>
+                            <th>Estimated Cost</th>
+                        </tr>
+                        <tr>
+                            <td>{{ params['type'] }}</td>
+                            <td>{{ params['due_date'] }}</td>
+                            <td>{{ params['est_cost'] }} </td>
+                        </tr>
+                    </table>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+        <hr>
+        <p>
+            If we got anything wrong with the {{ obj }} details or you want to cancel the {{ obj }}, please be sure to call us at (876) 555-5555!
+        </p>
+        <br>
+        <hr>
+        <p>
+            Thanks for making it Puncy's!
+        </p>
+        
+    </body>
+    <footer>
+        Copyright C. - Puncy's Store (2021)
+    </footer>
+</html>

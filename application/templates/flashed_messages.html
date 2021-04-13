@@ -1,0 +1,24 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <link rel = "stylesheet" href = "{{url_for('static', filename = 'css/flash.css')}}"/>
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+        <span class = "close-flash">&times;</span>
+      </div>
+    {% endfor %}
+    <script>
+        window.onload = function(){
+            let flashes = document.getElementsByClassName("alert");
+            let x;
+            for (x=0;x<flashes.length;x++)
+            {
+                flashes[x].addEventListener("click", function(){
+                    this.style.display = "none";
+                })
+            }
+        }
+    </script>
+  {% endif %}
+
+{% endwith %}

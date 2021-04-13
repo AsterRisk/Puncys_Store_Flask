@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <link rel = "stylesheet" href = "flash.css">
+    </head>
+    <body>
+        <div class = "alert">
+            This is a test alert
+            <span class = "close-flash">&times;</span>
+        </div>
+        
+        <div class = "alert alert-success">
+            This is a test success alert
+            <span class = "close-flash">&times;</span>
+        </div>
+        
+        <div class = "alert alert-danger">
+            This is a test danger alert
+            <span class = "close-flash">&times;</span>
+        </div>
+        <script>
+            window.onload = function(){
+                let flashes = document.getElementsByClassName("alert");
+                let x;
+                for (x=0;x<flashes.length;x++)
+                {
+                    flashes[x].addEventListener("click", function(){
+                        this.style.display = "none";
+                    })
+                }
+            }
+        </script>
+    </body>
+</html>
