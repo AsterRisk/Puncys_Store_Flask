@@ -1,0 +1,184 @@
+<html>
+    
+    <head>
+        <title>Generate Bills</title>
+    </head>
+    <body>
+        {% include "base.html" %}
+        
+            <link rel = "stylesheet" href = "{{url_for('static', filename = 'css/gen_bill.css')}}"/>
+        
+        
+        {% block main %}
+        <style>
+            .content-holder{
+  margin-left:40px;
+}
+
+.order-details{
+  margin-top:10px;
+}
+
+.modal{
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content{
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.modal hr{
+  font-size: 30px;
+  font-weight: bold;
+  border: solid;
+  width: 100%;
+}
+
+.bill-btn{
+    width:80%;
+    border: none;
+    background-color: rgb(49, 103, 235);
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+}
+
+.bill-btn:hover{
+    background-color: rgb(66, 117, 247);
+}
+
+#gen-bill{
+    width:100%;
+}
+
+.close {
+color: #aaa;
+float: right;
+font-size: 28px;
+font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+color: black;
+text-decoration: none;
+cursor: pointer;
+}
+        </style>
+        <script>
+            window.onload = function(){
+                let gen_btn = document.getElementById('generate-bill');
+                let receipt = document.getElementById('receipt-modal');
+                let fab_data = document.getElementById('fab_cost');
+                let lab_data = document.getElementById('lab_cost');
+                let fab_cost = document.getElementById('fabric-cost');
+                let lab_cost = document.getElementById('labour-cost');
+                let sub_cost = document.getElementById('subtotal');
+                let gct_cost = document.getElementById('gct');
+                let tot_cost = document.getElementById('total');
+                gen_btn.addEventListener("click", function(){
+
+                    
+                    fab = parseFloat(fab_data.value);
+                    lab = parseFloat(lab_data.value);
+                    if(isNaN(fab) || isNaN(lab))
+                    {
+                        alert("Please enter a valid number value.");
+                    }
+                    else{
+                        receipt.style.display = 'inline-block';
+                        sub = fab+lab;
+                        gct = sub*0.165;
+                        tot = sub+gct;
+                        fab_cost.innerHTML = "<b>Fabric Cost: </b>$" + fab.toFixed(2) ;
+                        lab_cost.innerHTML = "<b>Labour Cost: </b>$" + lab.toFixed(2) ;
+                        sub_cost.innerHTML = "<b>Subtotal: </b>$" + sub.toFixed(2) ;
+                        gct_cost.innerHTML = "<b>GCT (16.5%): </b>$" + gct.toFixed(2) ;
+                        tot_cost.innerHTML = "<b>Total Cost: </b>$" + tot.toFixed(2) ;
+                    }
+                    
+                })
+                let close = document.getElementById('close-modal');
+                close.addEventListener("click", function(){
+                    receipt.style.display = 'none';
+                })
+            }
+        </script>
+        <form action = "/bills" method = "POST">
+            {{ form.csrf_token }}
+            <div class = "modal" id = "receipt-modal">
+                <div class = "modal-content">
+                    <span class="close" id = "close-modal">&times;</span>
+                    <h2>Is the following information right?</h2>
+                    <p>
+                        <em>Click the close button to go back and change the cost information.</em>
+                    </p>
+                    <hr>
+                    <span><b>Customer Name: </b> {{order.first_name}} {{order.last_name}}</span>
+                    <br>
+                    <span><b>Job Type: </b>{{ order.type }}</span>
+                    <br>
+                    <span><b>Date Placed: </b>{{ order.date_placed }}</span>
+                    <br>
+                    <span><b>Date Completed: </b>{{ date_completed }}</span>
+                    <br>
+                    <span id = "fabric-cost"><b>Fabric Cost: </b></span>
+                    <br>
+                    <span id = "labour-cost"><b>Labour Cost: </b></span>
+                    <br>
+                    <span id = "subtotal"><b>Subtotal: </b></span>
+                    <br>
+                    <span id = "gct"><b>GCT (16.5%): </b></span>
+                    <br>
+                    <hr>
+                    <span id = "total"><b>Total Cost: </b></span>
+                    <br>
+                    <br>
+                    {{ form.submit(class_ = "bill-btn") }}
+                </div>
+            </div>
+            <div style = "display:none;">
+                {{ form.order_id }}
+                {{ form.user_id }}
+                {{ form.job_type }}
+            </div>
+            <div class = "content-holder">
+                <h1>Bill Form</h1>
+                <p>
+                    <em>Please fill in the form below with the relevant information.</em>
+                </p>
+                <hr>
+                <p class = "order-details"><b>Customer Name: </b> {{order.first_name}} {{order.last_name}}</p>
+                
+                <p class = "order-details"><b>Job Type: </b>{{ order.type }}</p>
+                
+                <p class = "order-details"><b>Date Placed: </b>{{ order.date_placed }}</p>
+                
+                <p class = "order-details"><b>Date Completed: </b>{{ date_completed }}</p>
+                
+                <p class = "order-details"><b>Fabric Cost: </b>{{ form.fab_cost }}</p>
+                
+                <p class = "order-details"><b>Labour Cost: </b>{{ form.lab_cost }}</p>
+                
+                <div id = "generate-bill" class = "bill-btn">Generate Bill</div>
+            </div>
+            
+        </form>
+            
+        {% endblock %}
+
+    </body>
+</html>

@@ -63,17 +63,21 @@ class Bill(db.Model):
     job_type = db.Column('job_type', db.String)
     fabric_cost = db.Column('fabric_cost', db.Float)
     labour_cost = db.Column('labour_cost', db.Float)
+    gct = db.Column('gct', db.Float)
+    total_cost = db.Column('total_cost', db.Float)
     date_completed = db.Column('date_completed', db.String(10))
 
-    def __init__(self, user_id, bill_id, order_id, job_type, fabric_cost, labour_cost, date_completed):
+    def __init__(self, user_id, order_id, job_type, fabric_cost, labour_cost, date_completed, gct, total_cost):
         self.user_id = user_id
         self.order_id = order_id
         self.job_type = job_type
         self.fabric_cost = fabric_cost
         self.labour_cost = labour_cost
         self.date_completed = date_completed
+        self.gct = gct
+        self.total_cost = total_cost
 
-        ins = bills.insert().values(user_id = self.user_id, order_id = self.order_id, job_type = self.job_type, fabric_cost = self.fabric_cost, labour_cost = self.labour_cost, date_completed = self.date_completed)
+        ins = bills.insert().values(user_id = self.user_id, order_id = self.order_id, job_type = self.job_type, fabric_cost = self.fabric_cost, labour_cost = self.labour_cost, date_completed = self.date_completed, gct = self.gct, total_cost = self.total_cost)
         query(ins)
 
 class JobPreset(db.Model):

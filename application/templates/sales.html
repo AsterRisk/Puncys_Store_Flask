@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sales Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="colorlib.com">
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    $('.sales-form-input').datepicker();
+</script>
+<link href="static/css/material-design-iconic-font.css" rel="stylesheet">
+
+<link href="static/css/appointment.css" rel="stylesheet"> 
+
+</head>
+<body>
+<div class="wrapper">
+<form action="/sales" id="wizard" method="POST">
+    {{form.csrf_token}}
+
+<h2></h2>
+<section>
+<div class="inner">
+<div class="image-holder">
+
+<img src="{{url_for('static', filename = 'images/sales_forecast.jpg')}}" alt="IMG">
+</div>
+<div class="form-content">
+<div class="form-header">
+<h3>Puncy's Sales Report</h3>
+</div>
+<p>Please fill in the relevant dates to view Sales Report.</p>
+<div class="form-row">
+
+
+</div>
+<div class="form-row">
+    <div class="form-holder">
+    <lable for="date_from">Date From:</lable> <br>
+    {{form.date_from(class_="sales-form-input")}}
+    
+    
+<br>
+<br>
+
+<div class="form-row">
+    <div class="form-holder">
+        <label for="date_to">Date To:: </label>
+        {{form.date_to(class_="sales-form-input")}}
+<br>
+<br>
+
+        
+    </div>
+</div>
+    <input type="submit" id="btnSubmit" value= "Submit" class="btn"/>
+</div>
+
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+        
+</form>
+
+</div>
+
+
+<script src="static/vendor/jquery-3.3.1.min.js"></script>
+
+
+<script src="static/vendor/jquery.steps.js"></script>
+
+
+<script src="static/js/main1.js"></script>
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-23581568-13');
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"rayId":"63dd64a00aa5042c","si":10,"version":"2021.4.0"}'></script>
+</body>
+</html>

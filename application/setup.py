@@ -47,6 +47,8 @@ bills = Table(
     Column('job_type', String(12)),
     Column('fabric_cost', Float),
     Column('labour_cost', Float),
+    Column('total_cost', Float),
+    Column('gct', Float),
     Column('date_completed', String(10)), # Probably gonna want to make this not-null at some point...
 )
 

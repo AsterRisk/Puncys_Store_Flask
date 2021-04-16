@@ -1,0 +1,54 @@
+.themed-grid-col {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    background-color: rgba(86, 61, 124, .15);
+    border: 1px solid rgba(86, 61, 124, .2);
+    }
+    
+    .headings{
+    font-size: 22px;
+    background-color: #6f95f5;
+    font-family:'Courier New', Courier, monospace;
+    font-weight: bold;
+    }
+    
+    header{
+    border:lightgrey;
+    background-image:url(../images/sales_bk.jpg);
+    height:30vh;
+    padding-left: 25px;
+    padding-top: 20px;
+    
+    }
+    
+    .flex_container{
+    margin-left: 110px;
+    margin-right: 110px;
+    }
+    
+    body{
+    font-family:'Courier New', Courier, monospace;
+    }
+    
+    h1{
+    color:#ffffff;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 48px;
+    }
+    
+    
+    p{
+    font-size: 20px;
+    }
+    
+    .total{
+    display:flex;
+    justify-content: space-between;
+    font-weight: bold;
+    text-align: left;
+    }
+    
+    header h2{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color:#ffffff;
+    }

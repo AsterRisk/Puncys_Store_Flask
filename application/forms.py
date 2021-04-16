@@ -31,6 +31,20 @@ class ChangeStateForm(FlaskForm):
     queries = StringField("state-queries")
     submit = SubmitField('Save Changes', id = 'save-changes')
 
+class BillForm(FlaskForm):
+    fab_cost = StringField("fab-cost", validators = [DataRequired()], render_kw={})
+    lab_cost = StringField("lab-cost", validators = [DataRequired()], render_kw={})
+    user_id = StringField("user_id", validators = [DataRequired()], render_kw={})
+    job_type = StringField("job_type", validators = [DataRequired()], render_kw={})
+    order_id = StringField("order-id", validators = [DataRequired()], render_kw={})
+    submit = SubmitField("Save Bill", id = 'gen-bill')
+
+class SalesForm(FlaskForm):
+    date_from = DateField('date_from', validators = [DataRequired()], format="%Y-%m-%d", render_kw={"placeholder":" Enter Date"})
+    date_to = DateField('date_to', validators = [DataRequired()], format="%Y-%m-%d", render_kw={"placeholder":" Enter Date"})
+    # || Submit
+    submit = SubmitField('Submit')
+
 class OrderForm(FlaskForm):
     
     

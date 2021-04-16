@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Puncy's Store</title>
+        <link rel='stylesheet' type='text/css' href='{{url_for("static", filename = "css/landing.css")}}'/>
+        <link rel="stylesheet" href="{{ url_for('static',filename = 'css/application.css') }}">
+    </head>
+    <body>
+        <header>
+            <img class="logo" src="{{url_for('static', filename = '/images/logo.jpg')}}">
+            <ul>
+                <span class="navitem" id="home">Home</span>
+                <span class="navitem"><a href="{{url_for('order')}}">Make Order</a></span>
+                <span class="navitem"><a href="{{url_for('appointment')}}">Make Appointment</a></span>
+                <span class="navitem"><a href="{{url_for('view_orders')+'/'+user_id}}">View Order</a></span>
+                <span class="navitem"><a href="{{url_for('view_apps')+'/'+user_id}}">View Appointment</a></span>
+                <div id="log">
+                    <a href = "{{url_for('logout')}}"><button id="lo">Logout</button></a>
+                </div>
+            </ul>
+        </header>
+        {% include "flashed_messages.html" %}
+        <div class="bkgnd-img">
+            <img src="{{url_for('static', filename = '/images/sewing_bk.png')}}" id="back" alt="Background Image of cloth"/>
+        </div>
+        <main>
+            <h1>We make what <br><strong id="strong">you</strong> want.</h1>
+            <p>
+                Our mission is to create an apparel company that can offer superior design, quality and value to the consumer.
+                <br>
+                We will accomplish this by being committed to offering great service and real value to our business partners and consumers.
+            </p>
+        <a href = "{{url_for('order')}}"><button id="make">Make Your Order!</button></a>
+        </main>
+        
+    </body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    
+    <title>Puncy's Store Sales Report</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href=".{{url_for('static', filename = 'css/sales_grid_bootstrap.min.css')}}" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href=".{{url_for('static', filename = 'css/sales_grid.css')}}" rel="stylesheet" type="text/css" />
+</head>
+
+<div class="flex_container">
+    <header>
+        <h1>Sales Report</h1>
+        <h2>Puncy's Store </h2>
+    </header>
+</div>
+
+<br>
+<br>
+
+<body class="py-4">
+    <div class="container">
+
+        <div class="row mb-3">
+            <div class="col-4 themed-grid-col headings">Date</div>
+            <div class="col-4 themed-grid-col headings">Units</div>
+            <div class="col-4 themed-grid-col headings">Clothes Type</div>
+            <div class="col-4 themed-grid-col headings">Sales</div>
+
+        </div>
+
+        {% for order in orders %}
+            <div class="row mb-3">
+                <div class="col-4 themed-grid-col"> {{order.date_placed}} </div>
+                <div class="col-4 themed-grid-col">{{order.total_unit}}</div>
+                <div class="col-4 themed-grid-col"> {{order.type}} </div>
+                <div class="col-4 themed-grid-col">${{order.total_sales}}</div>
+
+            </div>
+        {% endfor %}
+
+        <div class="total">
+            <p>Grand Total: </p>
+            <p>${{grand_value}}</p>
+        </div>
+
+    </div> <!-- /container -->
+</body>
+
+</html>

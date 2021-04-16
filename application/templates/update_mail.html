@@ -51,7 +51,7 @@
     </head>
     <body>
         <div id = "banner">
-            <img class = "logo" src = "{{url_for('static', filename = 'images/logo.png')}}"/>
+            <img class="logo" src="{{url_for('static', filename = '/images/logo.jpg')}}"> <!--{{url_for('static', filename = 'images/logo.png')}}-->
             <!---->
             <h1 class = "business-name">Puncy's Store</h1>
         </div>
@@ -79,7 +79,7 @@
                     <br>
                     <table id = "order-details">
                         <tr class = "table-header">
-                            <th>Clothing Type</th>
+                            <th>Clothing Type</th> 
                             <th>Due Date</th>
                             <th>Estimated Cost</th>
                         </tr>

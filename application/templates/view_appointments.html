@@ -1,0 +1,263 @@
+{% extends "base.html" %} 
+<!--Developed by: 620122579-->
+{% block css %} 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/view_orders.css') }}">
+    <style>
+        .modal{
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .modal-content{
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        #order-table{
+            width:100%;
+        }
+
+        .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+        }
+
+        table{
+        width: 100%;
+        }
+
+        main{
+        width: 100%;
+        }
+
+        td{
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: center;
+        border: 1px;
+        border: solid #000;
+        }
+
+        th{
+        border: 1px;
+        border: solid #000;
+        padding-left: 5px;
+        padding-right: 5px;
+        }
+
+        .table-head{
+        background-color: rgb(13, 0, 83);
+        color: #fff;
+        text-align:center;
+        }
+
+        .state{
+        
+        border: solid 1px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 15px;
+        padding: 5px;
+        width :100%;
+        }
+
+        .save-changes-btn{
+            width :100%;
+            font-weight: bold;
+            background-color: rgb(0, 140, 255);
+            color: #fff;
+            border: none;
+        }
+
+        .save-changes-btn:hover{
+            background-color: rgb(65, 168, 253);
+        }
+
+        .new-state{
+        
+        border: solid 1px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 15px;
+        padding: 5px;
+        width :100%;
+        }
+
+        .pending{
+        background-color: #fff;
+        border-color: #888;
+        color: #888;
+        }
+
+        .pending:hover{
+        background-color: #888;
+        border-color: #fff;
+        color: #fff;
+        }
+
+        .in-progress{
+        background-color: rgb(255, 238, 0);
+        color: rgb(0, 0, 0);
+        border-color: rgb(255, 238, 0);
+        }
+
+        .in-progress:hover{
+        background-color: rgb(224, 202, 0);
+        color: #000;
+        border-color: rgb(224, 202, 0);
+        }
+
+        .completed{
+        background-color: rgb(15, 241, 46);
+        border-color: rgb(15, 241, 46);
+        color: #fff;
+        }
+
+        .completed:hover{
+        background-color: rgb(136, 241, 136);
+        border-color: rgb(136, 241, 136);
+        color: #fff;
+        }
+
+        .cancelled{
+        background-color: rgb(241, 15, 46);
+        border-color: rgb(241, 15, 46);
+        color: #fff;
+        }
+
+        .cancelled:hover{
+        background-color: rgb(241, 136, 136);
+        border-color: rgb(241, 136, 136);
+        color: #fff;
+        }
+    </style>
+
+{% endblock %} 
+
+{%  block main %} 
+<br>
+<hr>
+<script>
+    window.onload = function(){
+        let x;
+        let states = document.getElementsByClassName("state");
+        let state_btns = document.getElementsByClassName("new-state");
+        let state_modal = document.getElementById("state-modal");
+        for (x=0;x<y;x++)
+        {
+            state_btns[x].addEventListener("click", function(){
+                
+                console.log("Clickk");
+                target = document.getElementById(("state-" +temp))
+                console.log("state-" +temp)
+                
+                target.innerHTML = this.innerHTML
+                target.classList.remove(target.classList[0])
+                target.classList.remove("state")
+                target.classList.add(this.classList[0])
+                target.classList.add("state")
+                console.log(target.classList)
+                state_modal.style.display = "none";
+                queries.value += temp  + "|state|" + this.classList[2] + ";";
+                console.log(queries.value);
+            })
+        }
+        for (x=0;x<num;x++)
+        {
+            states[x].addEventListener("click", function(){
+                state_modal.style.display = "inline-block";
+                console.log(this.id);
+                temp = this.id.split("-")[1];
+                modal_title.innerHTML = "Change State for Appointment: " + temp;
+            })
+        }
+        let close_modal = document.getElementById("close-change-state");
+        close_modal.onclick = function() {
+            console.log("Click")
+            state_modal.style.display = "none";
+        }
+    }
+
+</script>
+<table id = "order-table">
+    <tr class = "table-head">
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Contact Number</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>State</th>
+    </tr>
+    {% for app in apps %} 
+        
+        <tr>
+            <td> {{users[app['app_id']]['fname']}} </td>
+            <td> {{users[app['app_id']]['lname']}} </td>
+            <td> {{users[app['app_id']]['tele_num']}} </td>
+            <td> {{app.app_date}} </td>
+            <td> {{app.app_time}} </td>
+            <td> 
+                {% if app.app_status == "P" %}
+                    <span id = "state-{{app.app_id}}" class = "pending state">Pending</span> <!---->
+                {% else %}
+                    {% if app.app_status == "A" %}
+                    <span id = "state-{{app.app_id}}" class = "in-progress state">In Progress</span> <!---->
+                    {% else %}
+                        {% if app.app_status == "C" %} 
+                        <span id = "state-{{app.app_id}}" class = "completed state">Accepted</span> <!---->
+                        {% else %}
+                            {% if app.app_status == "D" %}
+                                <span id = "state-{{app.app_id}}" class = "cancelled state">Denied</span> <!---->  <!--<span class = "cancelled state">Cancelled</span>-->
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<div class = "modal" id = "state-modal">
+    <div class = "modal-content">
+        <span class="close" id = "close-change-state">&times;</span>
+        <span><h1 id="state-modal-title"></h1></span>
+        <hr>
+        <span>
+            <p>
+                <em>Click the state you want to change this appointment to.</em>
+                <br>
+                <b>Click the close button in the top right to cancel the changes.</b>
+            <p>
+        </span>
+        <table>
+            <tr>
+                <td><span id = "pend" class = "pending new-state P">Pending</span></td>
+                <td><span id = "comp" class = "completed new-state C">Accepted</span></td>
+                <td><span id = "canc" class = "cancelled new-state D">Denied</span></td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        
+    </div>
+</div>
+{% endblock %}

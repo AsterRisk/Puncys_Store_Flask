@@ -81,6 +81,18 @@ th{
   width :100%;
 }
 
+.save-changes-btn{
+    width :100%;
+    font-weight: bold;
+    background-color: rgb(0, 140, 255);
+    color: #fff;
+    border: none;
+}
+
+.save-changes-btn:hover{
+    background-color: rgb(65, 168, 253);
+}
+
 .new-state{
   
   border: solid 1px;
@@ -142,6 +154,15 @@ th{
 {% endblock %} 
 
 {%  block main %} 
+
+<script>
+    $(document).ready(function()
+    {
+        $(".est-cost").focusout(function(){
+            console.log(this.html());
+        })
+    });
+</script>
 <br>
 <p>
 	<em><b>Please note:</b> Orders listed as Completed will not be here, but will instead be visible on the bills page.</em>
@@ -157,7 +178,7 @@ th{
         <th>Due Date</th>
         <th>State</th>
         <th>View Measurements</th>
-        
+        <th>Estimated Cost</th>
     </tr>
     {% for order in orders %} 
         
@@ -248,25 +269,44 @@ th{
                         let states = document.getElementsByClassName("state");
                         let num = states.length;
                         let state_modal = document.getElementById("state-modal");
+                        let cost_modal = document.getElementById("cost-modal");
                         let close_modal = document.getElementById("close-change-state");
                         let temp;
-                        let modal_title = document.getElementById("modal-title");
+                        let costs = document.getElementsByClassName("est-cost");
+                        let close_cost = document.getElementById("close-cost");
+                        let modal_title = document.getElementById("state-modal-title");
+                        let cost_title = document.getElementById("cost-modal-title");
                         let state_btns = document.getElementsByClassName("new-state");
                         let y = state_btns.length;
                         let x;
                         let pend_btn = document.getElementById("pend-btn");                    
                         let accp_btn = document.getElementById("accp-btn");                
                         let comp_btn = document.getElementById("comp-btn");                
-                        let canc_btn = document.getElementById("canc-btn");                
+                        let canc_btn = document.getElementById("canc-btn");    
+                        let set_cost = document.getElementById("set-cost-modal");            
                         let target;
+                        let temp_cost;
                         let queries = document.getElementById("queries");
+                        let new_cost = document.getElementById("new-cost");
+                        let change_cost = document.getElementById("change-cost-btn");
                         for (x=0;x<num;x++)
                         {
                             states[x].addEventListener("click", function(){
                                 state_modal.style.display = "block";
                                 console.log(this.id);
+                                
                                 temp = this.id.split("-")[1];
                                 modal_title.innerHTML = "Change State for Order: " + temp;
+                            })
+                        }
+                        for (x=0;x<costs.length;x++)
+                        {
+                            costs[x].addEventListener("click", function(){
+                                temp = this.id.split("-")[1];
+                                console.log("Hey");
+                                target = this;
+                                set_cost.style.display = "inline-block";
+                                cost_title.innerHTML = "Change estimated cost for Order: " +temp;
                             })
                         }
                         for (x=0;x<y;x++)
@@ -284,10 +324,11 @@ th{
                                 target.classList.add("state")
                                 console.log(target.classList)
                                 state_modal.style.display = "none";
-                                queries.value += this.classList[2] + "|" + temp + ";";
+                                queries.value += temp  + "|state|" + this.classList[2] + ";";
                                 console.log(queries.value);
                             })
                         }
+                        
                         /*pend_btn.addEventListener("click", function(){
                             console.log("Clickk");
                             target = document.getElementById(("state-"+temp));
@@ -320,10 +361,37 @@ th{
                             console.log("Click")
                             state_modal.style.display = "none";
                         }
+                        close_cost.onclick = function() {
+                            console.log("Click")
+                            set_cost.style.display = "none";
+                        }
+                        change_cost.addEventListener("click", function(){
+                           
+                            temp_cost = parseFloat(new_cost.value).toFixed(2);
+                            if (isNaN(temp_cost))
+                            {
+                                alert("Please enter a valid money value.")
+                            }
+                            else
+                            {
+                                target.innerHTML = "$" + temp_cost;
+                                console.log(typeof(temp_cost));
+                                console.log(temp_cost);
+                                console.log(temp_cost == NaN);
+                                set_cost.style.display = "none";
+                                queries.value += temp + "|est_cost|" + new_cost.value +";";
+                                new_cost.value = "";
+                                console.log(queries.value);
+                            }
+                                
+                            
+                        })
+
+
                     }
                 </script>
             </td>
-            
+            <td id = "cost-{{ order.order_id }}" class = "est-cost">${{ order.est_cost }}</td>
         </tr>
         
     {% endfor %}
@@ -332,7 +400,7 @@ th{
 <div class = "modal" id = "state-modal">
     <div class = "modal-content">
         <span class="close" id = "close-change-state">&times;</span>
-        <span><h1 id="modal-title"></h1></span>
+        <span><h1 id="state-modal-title"></h1></span>
         <hr>
         <span>
             <p>
@@ -355,11 +423,30 @@ th{
         
     </div>
 </div>
+<div class = "modal" id = "set-cost-modal">
+    <div class = "modal-content">
+        <span class="close" id = "close-cost">&times;</span>
+        <span><h1 id="cost-modal-title"></h1></span>
+        <hr>
+        <span>
+            <p>
+                <em>Enter the new estimated cost for this order.</em>
+                <br>
+                <b>Click the close button in the top right to cancel the changes.</b>
+            </p>
+        </span>
+        <input type = "text" id = "new-cost"/>
+        <br>
+        <button class = "save-changes-btn" id = "change-cost-btn">Save Changes</button>
+        <br>
+    </div>
+</div>
 <form action = "/save_changes" method = "POST">
     <div style ="display:none;">
         {{  form.csrf_token  }}
         {{  form.queries  }}
     </div>
+    <br>
     <div id = "save-changes" display = "none">
         {{  form.submit(class_ = "save-changes-btn")  }}
     <div>    

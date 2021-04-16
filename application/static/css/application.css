@@ -1,0 +1,23 @@
+.logo{
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+}
+
+.admin-btn{
+    background-color: rgb(246, 246, 246);
+}
+
+.admin-btn:hover{
+    box-shadow: 0 0 10px #9ecaed;;
+}
+
+.admin-ctrl{
+    float:left;
+    height:100px;
+    width:100px;
+}
+
+.title{
+    margin-left:20px;
+}

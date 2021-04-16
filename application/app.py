@@ -1,8 +1,8 @@
 from flask import Flask, redirect, url_for, request, make_response, render_template, render_template_string, session, flash, send_from_directory
 from flask_login import login_user, logout_user, current_user, login_required, login_manager
 from flask_mail import Message
-from .models import Login, User, Order, Appointment, Measurement
-from .forms import LoginForm, AppointmentForm, RegistrationForm, OrderForm, ChangeStateForm, FlaskForm
+from .models import Login, User, Order, Appointment, Measurement, Bill
+from .forms import LoginForm, AppointmentForm, RegistrationForm, OrderForm, ChangeStateForm, SalesForm, BillForm
 from .setup import query
 from random import randint
 import datetime
@@ -12,6 +12,13 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import os
 
 session = {}
+completed_orders = []
+
+def generate_bill(order_lst):
+    for order in order_lst:
+        yield render_template("gen_bill.html", order = order, date_completed = datetime.date.today().strftime("%Y-%m-%d"))
+
+gen = generate_bill([])
 
 def loginUser(user): # Developed by: 620122579
     print(user)
@@ -109,13 +116,11 @@ def login():
                     flash("Login failed. No user with that email found.", "danger")
                     return redirect(url_for('login'))
                 temp = (form.password.data + str(user.salt))
-                
                 if (user and check_password_hash(user.password_hash, temp)):
                     loginUser(user)
                     flash("Login successful!", "success")
                     return redirect(url_for('home'))
                 else:
-                    
                     flash("Login failed. Please check your credentials.", "danger")
                     return redirect(url_for('login'))
                     
@@ -131,6 +136,7 @@ def login():
 # Developed by: 620122579
 def save_changes():
     form = ChangeStateForm()
+    
     if request.method == "POST":
         try:
             instructions = form.queries.data.split(";")
@@ -140,34 +146,42 @@ def save_changes():
         table = instructions[0]
         if (table == "orders"):
             id_name = "order_id"
-            obj = "order"
+            name = "order"
         if (table == "appointments"):
             id_name = "app_id"
-            obj = "appointment"
+            name = "appointment"
         instructions = [ins for ins in instructions[1:] if (ins)]
         for instr in instructions:
-            state_iD = instr.split("|")
-            state = state_iD[0]
-            iD = state_iD[1]
-            order = query("select * from orders where order_id = {}".format(iD)).first()
-            old_state = order['state']
-            if(not(old_state == state)): # if a change was actually made
-                query("UPDATE {0} SET state = '{1}' WHERE {2} = {3};".format(table, state, id_name, iD))
+            val_iD_field = instr.split("|")
+            val = val_iD_field[2]
+            field = val_iD_field[1]
+            iD = val_iD_field[0]
+            if((field == "state") and (table == "orders") and (val == "C")):
+                completed_orders.append(iD)
+            obj = query("select * from {} where {} = {};".format(table, id_name, iD)).first()
+            old_val = obj[field]
+            if(not(old_val == val)): # if a change was actually made
+                if (field == "est_cost"):
+                    query("UPDATE {0} SET {4} = {1} WHERE {2} = {3};".format(table, val, id_name, iD, field))
+                else:
+                    query("UPDATE {0} SET {4} = '{1}' WHERE {2} = {3};".format(table, val, id_name, iD, field))
                 msg = Message()
                 msg.subject = "There's been an update to your order at Puncy's Store"
                 msg.sender = app.config['DEFAULT_SENDER']
-                order = query("select * from orders where order_id = {}".format(iD)).first()
-                print("ORDER:\n")
-                print(order, end = "\n\n")
-                msg.html = render_template("update_mail.html", first_name = query("select first_name from users where user_id = {}".format(order['user_id'])).first()[0], obj = obj, new_state = state, params = order)
-                cust_email = query("select email from users where user_id = {}".format(order['user_id'])).first()
+                obj = query("select * from {} where {} = {}".format(table, id_name, iD)).first()
+                msg.html = render_template("update_mail.html", first_name = query("select first_name from users where user_id = {};".format(obj['user_id'])).first()[0], \
+                    obj = name, new_state = val, params = obj)
+                cust_email = query("select email from users where user_id = {}".format(obj['user_id'])).first()
                 print(cust_email)
                 msg.recipients = ["puncysstore@gmail.com", cust_email[0]]
                 print(msg.recipients)
                 mail.send(msg)
         flash("Changes made successfully!", "success")
-
-        return redirect(url_for('home'))
+        if (len(completed_orders) == 0):
+            return redirect(url_for('home'))
+        else:
+            gen = generate_bill(completed_orders)
+            return redirect(url_for('bill'))
     else:
         flash("Bad request method, redirecting...", "danger")
         return redirect(url_for('home'))
@@ -175,11 +189,14 @@ def save_changes():
 @app.route("/view_orders")
 # Developed by: 620122579
 def view_orders():
-    """if (session['clearance'] == 0):
+    try:
+        if (session['clearance'] == 1):
             pass
-    else:
-        flash("You do not have authority to view this page.", "danger")
-        return redirect(url_for('home'))"""
+        else:
+            return redirect('/view_orders/{}'.format(session['user_id']))
+    except:
+        flash("You must log in to view this page", "danger")
+        return redirect(url_for('login'))
     form = ChangeStateForm()
     form.queries.render_kw={"value":"orders;"}
     orders = query("select * from orders where state != 'C';").fetchall()
@@ -188,24 +205,23 @@ def view_orders():
         measurement = query("SELECT * FROM measurements WHERE measurement_id = {}".format(order.measurement_id)).first()
         measurements[order.measurement_id] = meas_dict(measurement.length, measurement.waist, measurement.hip, measurement.sleeve, measurement.bicep, measurement.armhole, measurement.neck, measurement.shoulder, measurement.across_back, measurement.bust, measurement.bust_point, measurement.ankle, measurement.round_leg, measurement.round_knee, measurement.round_ankle)
     #measurements = [query("select * from measurements where measurement_id = {};".format(order.measurement_id)).first() for order in orders]
-    print(measurements)
     return render_template("view_orders.html", orders = orders, measurements = measurements, form = form)
 
 @app.route("/view_orders/<user_id>")
 # Developed by: 620122579
 def view_my_orders(user_id):
     # This is the view for a customer viewing their specific orders
-    if not((session['user_id'] == user_id)):
-        if session['clearance'] == 0:
+    try:
+        if (session['clearance'] == 1):
             pass
         else:
-            flash("You do not have authority to view this page.", "danger")
-            return redirect(url_for('home'))
-
-    
+            pass
+    except:
+        flash("You must log in to view this page", "danger")
+        return redirect(url_for('login'))
     orders = query("select * from orders where user_id = {};".format(user_id)).fetchall()
     measurements = [query("select * from measurements where measurement_id = {};".format(order.measurement_id)).fetchall() for order in orders]
-    return render_template("view_orders.html", orders = orders, measurements = measurements)
+    return render_template("view_my_order.html", orders = orders, measurements = measurements)
 
 @app.route("/logout")
 # Developed by: 620122579
@@ -271,7 +287,13 @@ def register():
 # templates\home_page\html\home.html <-- Relative path
 def home():
     if request.method == 'GET':
-        return make_response(render_template("home.html"), 200)
+        try:
+            if (session['clearance'] == 1):
+                return make_response(render_template("home.html"), 200)
+        except:
+            flash ("You must log in to view this page.", "danger")
+            return redirect(url_for('login'))
+        return make_response(render_template("landing-page.html", user_id = session['user_id']), 200)
     else:
         return make_response("Invalid Request Method.", 400)
     pass
@@ -349,13 +371,94 @@ def order():
         return make_response("Invalid Request Method.", 400)
     pass
 
+@app.route("/view_appointments")
+def view_apps():
+    try:
+        if (session['clearance'] == 1):
+            pass
+        else:
+            return redirect('/view_orders/{}'.format(session['user_id']))
+    except:
+        flash("You must log in to view this page", "danger")
+        return redirect(url_for('login'))
+    form = ChangeStateForm()
+    form.queries.render_kw={"value":"appointments;"}
+    apps = query("select * from appointments;").fetchall()
+    users = {}
+    for app in apps:
+        user_stuff = query("select first_name, last_name, tele_num from users where user_id = {}".format(app['user_id'])).fetchone()
+        users[app['app_id']] = {"fname":user_stuff[0], "lname":user_stuff[1], "tele_num":user_stuff[2]}
+    return render_template("view_appointments.html", apps = apps, form = form, users = users)
+
+@app.route("/view_appointments/<user_id>")
+def view_my_apps(user_id):
+    try:
+        if (session['clearance'] == 1):
+            pass
+        else:
+            pass
+    except:
+        flash("You must log in to view this page", "danger")
+        return redirect(url_for('login'))
+    form = ChangeStateForm()
+    form.queries.render_kw={"value":"appointments;"}
+    apps = query("select * from appointments where user_id = {};".format(user_id)).fetchall()
+    users = {}
+    for app in apps:
+        user_stuff = query("select first_name, last_name, tele_num from users where user_id = {}".format(app['user_id'])).fetchone()
+        users[app['app_id']] = {"fname":user_stuff[0], "lname":user_stuff[1], "tele_num":user_stuff[2]}
+    return render_template("view_appointments.html", apps = apps, form = form, users = users)
+
+@app.route('/test')
+def test_bill():
+    form = BillForm()
+    return render_template("gen_bill.html", form = form)
+
 @app.route("/bills", methods = ['POST', 'GET'])
 #@login_required
 def bill():
+    form = BillForm()
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    #developed by 620122579
+    try:
+        if(session['clearance'] > 1):
+            flash("You do not have the authority required to view this page.", 'danger')
+            return redirect(url_for('home'))
+    except:
+        flash("You must login to view this page.", 'danger')
+        return redirect(url_for('login'))
     if request.method == 'POST':
-        pass
+        iD = form.order_id.data
+        user_id = form.user_id.data
+        typ = form.job_type.data
+        fab = float(form.fab_cost.data)
+        lab = float(form.lab_cost.data)
+        gct = (fab+lab)*0.165
+        total = fab+lab+gct
+        query("update orders set est_cost = {} where order_id = {};".format(total, iD))
+        new_bill = Bill(user_id=user_id, order_id=iD, job_type = typ, fabric_cost = fab, labour_cost=lab, gct = gct, total_cost = total, date_completed = today)
+        flash("Bill generated successfully!", "success")
+        return redirect(url_for('bill'))
+    
     elif request.method == 'GET':
-        pass
+        try:
+            
+            sql = "SELECT * FROM orders where order_id = {};".format(completed_orders.pop(0))
+            print(sql)
+            order = query(sql).first()
+            print(order)
+            print(order['order_id'])
+            print(order['user_id'])
+            print(order['type'])
+
+            form.order_id.render_kw['value'] = order['order_id']
+            form.user_id.render_kw['value'] = order['user_id']
+            form.job_type.render_kw['value'] = order['type']
+            return render_template("gen_bill.html", form = form, order = order, date_completed = today)
+        except Exception as e:
+            print("THIS IS THE EXCEPTION YOU ARE LOOKING FOR: {}".format(e))
+            flash("No outstanding bills to generate!", "success")
+            return redirect(url_for('home'))
     else:
         return make_response("Invalid Request Method.", 400)
     pass
@@ -381,13 +484,24 @@ def appointment():
 	else:
 		return make_response("Invalid Request Method.", 400)
 
-@app.route("/sales_report", methods = ['POST', 'GET'])
+@app.route("/sales", methods = ['POST', 'GET'])
 #@login_required
 def sales_report():
-    if request.method == 'POST':
+        form = SalesForm()
+        if request.method == 'POST':
+            date_from=form.date_from.data
+            date_to=form.date_to.data
+
+            orders = query("SELECT SUM(est_cost) AS total_sales, date_placed, COUNT(type) AS total_unit , type FROM orders WHERE date_placed >= '{}' AND date_placed<= '{}' GROUP BY date_placed, type;".format(date_from, date_to)).fetchall()
+
+            grand_total=0
+            for i in orders:
+                grand_total+=(i[0])
+
+            return render_template('sales_report.html', orders=orders, grand_value=grand_total)
+        elif request.method == 'GET':
+            return make_response(render_template("sales.html", form=form))
+        else:
+            return make_response("Invalid Request Method.", 400)
         pass
-    elif request.method == 'GET':
-        pass
-    else:
-        return make_response("Invalid Request Method.", 400)
-    pass
+
