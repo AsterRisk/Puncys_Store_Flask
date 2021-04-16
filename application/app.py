@@ -73,12 +73,12 @@ def compare_dates(date1: str, date2: str): # Developed by: 620122579 #Expected i
     else: 
         return 0
 
-@app.route("/images/<filename>")
+@app.route("/images/<filename>") # Developed by: 620122579
 def get_file(filename: str):
     return send_from_directory(os.path.join(os.getcwd(), app.config['IMAGE_FOLDER']), filename)
 
 def meas_dict(length, waist, hip, sleeve, bicep, armhole, neck, shoulder, \
-            across_back, bust, bust_point, ankle, round_leg, round_knee, round_ankle):
+            across_back, bust, bust_point, ankle, round_leg, round_knee, round_ankle): # Developed by: 620122579
     meas = {}
     # (measurement.length, measurement.waist, measurement.hip, measurement.sleeve, 
     # measurement.bicep, measurement.armhole, measurement.neck, measurement.shoulder, 
@@ -236,7 +236,7 @@ def load_user(id):
     return User.query.get(int(id))
 
 @app.route("/register", methods = ['GET', 'POST'])
-# Developed by: 620122579
+# Developed by: 620122579 
 def register():
     form = RegistrationForm()
     if request.method == 'POST':
@@ -281,7 +281,7 @@ def register():
     else:
         return make_response("Invalid Request Method.", 400)
 
-@app.route("/home", methods = ['GET'])
+@app.route("/home", methods = ['GET']) 
 #@login_required
 # Developed by: 620122579
 # templates\home_page\html\home.html <-- Relative path
@@ -371,7 +371,7 @@ def order():
         return make_response("Invalid Request Method.", 400)
     pass
 
-@app.route("/view_appointments")
+@app.route("/view_appointments") # Developed by: 620122579
 def view_apps():
     try:
         if (session['clearance'] == 1):
@@ -390,7 +390,7 @@ def view_apps():
         users[app['app_id']] = {"fname":user_stuff[0], "lname":user_stuff[1], "tele_num":user_stuff[2]}
     return render_template("view_appointments.html", apps = apps, form = form, users = users)
 
-@app.route("/view_appointments/<user_id>")
+@app.route("/view_appointments/<user_id>") # Developed by: 620122579
 def view_my_apps(user_id):
     try:
         if (session['clearance'] == 1):
@@ -409,8 +409,7 @@ def view_my_apps(user_id):
         users[app['app_id']] = {"fname":user_stuff[0], "lname":user_stuff[1], "tele_num":user_stuff[2]}
     return render_template("view_appointments.html", apps = apps, form = form, users = users)
 
-@app.route('/test')
-def test_bill():
+
     form = BillForm()
     return render_template("gen_bill.html", form = form)
 
@@ -463,7 +462,7 @@ def bill():
         return make_response("Invalid Request Method.", 400)
     pass
 
-@app.route("/appointments", methods = ['POST', 'GET'])
+@app.route("/appointments", methods = ['POST', 'GET']) # developed by: 620129613
 #@login_required
 def appointment():
 	try:
@@ -484,7 +483,7 @@ def appointment():
 	else:
 		return make_response("Invalid Request Method.", 400)
 
-@app.route("/sales", methods = ['POST', 'GET'])
+@app.route("/sales", methods = ['POST', 'GET']) # DEveloped by: 620128371
 #@login_required
 def sales_report():
         form = SalesForm()
